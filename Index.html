@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Daily Routine">
+<meta name="theme-color" content="#0B0B0B">
+<title>Daily Routine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ====== Editorial / brand-guidelines theme ====== */
+  :root{
+    /* palette */
+    --void: #0B0B0B;
+    --ghost: #F3F2EE;
+    --paper: #FAFAF7;
+    --shore: #F1D5B1;
+    --ether: #A9C8C4;
+    --bay: #3A78DB;
+    --iris: #9886E2;
+    --infrared: #F25A45;
+
+    /* tokens the script references inline — keep the names */
+    --bg: var(--void);
+    --dawn: var(--bay);
+    --night: var(--void);
+    --dusk: var(--iris);
+    --amber: var(--iris);
+    --day: var(--paper);
+    --ink: #0B0B0B;
+    --ink-soft: rgba(11,11,11,0.56);
+    --sage: var(--void);
+    --gold: var(--shore);
+    --violet: var(--iris);
+    --sunflower: var(--infrared);
+    --card: var(--ghost);
+    --surface: rgba(11,11,11,0.035);
+    --surface-hover: rgba(11,11,11,0.06);
+    --border: rgba(11,11,11,0.16);
+    --border-soft: rgba(11,11,11,0.10);
+    --danger: #D8402B;
+    --danger-soft: rgba(242,90,69,0.12);
+    --danger-border: rgba(216,64,43,0.45);
+    --t: 0;
+    --radius: 0px;
+
+    --serif: 'Newsreader', 'Times New Roman', Georgia, serif;
+    --sans: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  *{ box-sizing: border-box; }
+  html{ background: #0B0B0B; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--void);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding: max(28px, env(safe-area-inset-top)) 14px 40px;
+    overflow-x:hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage{ width:100%; max-width: 580px; }
+
+  /* progress rule (replaces the sun arc) */
+  .arc-wrap{ position:relative; height: 34px; margin-bottom: 6px; }
+  .arc-wrap svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .sun{ transition: cx 0.6s cubic-bezier(.65,0,.35,1); }
+
+  .steplabel{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(243,242,238,0.62);
+    margin: 0 2px 12px;
+    min-height: 14px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .steplabel:empty::before{ content: 'Daily Routine'; }
+  .steplabel::after{ content: 'Version 1.0'; opacity: 0.7; }
+
+  /* the "page" */
+  .card{
+    position:relative;
+    background: var(--card) var(--grain);
+    border-radius: 0;
+    padding: 30px 28px 54px;
+    min-height: 360px;
+    display:flex;
+    flex-direction:column;
+  }
+  .card::after{
+    content: 'Daily Routine \2014  Guidelines';
+    position:absolute;
+    left: 28px; right: 28px; bottom: 18px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    pointer-events:none;
+  }
+
+  .icon{
+    width:30px; height:30px;
+    stroke: var(--ink);
+    stroke-width:1.3;
+    fill:none;
+    margin-bottom:22px;
+  }
+
+  h1{
+    font-family: var(--serif);
+    font-weight:300;
+    font-size: 44px;
+    line-height:1.02;
+    margin: 0 0 14px;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .sub{
+    color: var(--ink-soft);
+    font-size:14px;
+    line-height:1.5;
+    margin: 0 0 28px;
+    max-width: 44ch;
+  }
+
+  .actions{ display:flex; flex-direction:column; gap:8px; margin-top:auto; }
+
+  .btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family: var(--sans);
+    font-weight:500;
+    font-size:14.5px;
+    padding: 15px 16px;
+    border-radius: 0;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition: background 0.15s ease, color 0.15s ease;
+    color: var(--ink);
+  }
+  .btn:focus-visible{ outline: 2px solid var(--bay); outline-offset:2px; }
+  .btn-primary{ background: var(--void); color: var(--ghost); }
+  .btn-primary:hover{ background: #262626; }
+  .btn-secondary{ background: transparent; border: 1px solid var(--ink); color: var(--ink); }
+  .btn-secondary:hover{ background: var(--void); color: var(--ghost); }
+  .btn-arrow{ font-family: var(--mono); font-size:13px; opacity:0.8; }
+
+  /* bottom nav inside the page */
+  .nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 10px;
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ink);
+  }
+  .nav button{
+    cursor:pointer;
+    font-family: var(--mono);
+    font-weight:500;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform: uppercase;
+    border-radius: 0;
+    padding: 12px 16px;
+    border: none;
+  }
+  .nav button:focus-visible{ outline: 2px solid var(--bay); outline-offset:2px; }
+  .back-main:disabled{ opacity:0; pointer-events:none; }
+  .next-main:disabled{ opacity:0.4; cursor:not-allowed; }
+  .back-main{ background: transparent; color: var(--ink); padding-left: 0 !important; }
+  .back-main:hover{ text-decoration: underline; text-underline-offset: 4px; }
+  .next-main{ background: var(--void); color: var(--ghost) !important; }
+  .next-main:hover{ background:#262626; }
+  .next-main.complete-done{ background: var(--bay); color: var(--void) !important; }
+
+  .edit-link-btn{
+    background:none; border:none; cursor:pointer;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 4px 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    align-self:flex-start;
+  }
+  .edit-link-btn:hover{ color: var(--bay); }
+  .edit-link-btn.danger{ color: var(--danger); }
+
+  /* forms */
+  .edit-fields{ display:flex; flex-direction:column; gap: 18px; margin-bottom: 22px; }
+  .edit-field{ display:flex; flex-direction:column; gap: 6px; }
+  .edit-field label,
+  .link-schedule-row label{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .edit-input, .skill-note-input, .weight-input{
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 12px 12px;
+    border-radius: 0;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    width:100%;
+  }
+  .edit-input::placeholder, .skill-note-input::placeholder{ color: rgba(11,11,11,0.32); }
+  .edit-input:focus-visible, .skill-note-input:focus-visible, .weight-input:focus-visible{
+    outline: none; border-color: var(--ink);
+  }
+  .skill-note-input{ resize: vertical; line-height:1.5; margin-bottom: 10px; }
+
+  .remove-confirm{
+    margin-top: 14px; padding: 12px 14px;
+    background: var(--danger-soft); border: 1px solid var(--danger-border);
+    font-size: 13px;
+  }
+  .remove-confirm-actions{ display:flex; gap:16px; margin-top: 8px; }
+
+  .skill-note{ margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .skill-note-label{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .skill-note-text{
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 300;
+    line-height:1.4;
+    color: var(--ink);
+    margin: 0;
+  }
+  .skill-note-empty{
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: normal;
+  }
+
+  /* toolbar on the black backdrop */
+  .outer-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:12px;
+  }
+  .outer-btn{
+    background: transparent;
+    border: 1px solid rgba(243,242,238,0.28);
+    color: var(--ghost);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 9px 11px;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .outer-btn:hover{ background: var(--ghost); color: var(--void); }
+  .outer-btn:focus-visible{ outline: 2px solid var(--bay); outline-offset: 2px; }
+  .outer-btn.danger{ border-color: var(--infrared); color: var(--infrared); }
+  .outer-btn.danger:hover{ background: var(--infrared); color: var(--void); }
+  .outer-confirm{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    width:100%;
+    padding: 12px 14px;
+    border: 1px solid var(--infrared);
+    color: var(--ghost);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* manage list */
+  .manage-list{ display:flex; flex-direction:column; margin-bottom: 8px; border-top: 1px solid var(--ink); }
+  .manage-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .manage-drag{
+    flex-shrink:0; width: 22px; height: 30px;
+    border: none; background: transparent; color: var(--ink-soft);
+    font-size: 16px; line-height:1; cursor: grab; touch-action: none;
+    display:flex; align-items:center; justify-content:center; padding:0; user-select:none;
+  }
+  .manage-item.dragging{ cursor: grabbing; background: var(--shore); box-shadow: none; padding-left:8px; padding-right:8px; }
+  .manage-item-title{ font-family: var(--serif); font-size: 19px; font-weight: 300; color: var(--ink); }
+  .manage-item-title-link{ cursor: pointer; display:flex; align-items:center; gap: 10px; flex-wrap: wrap; flex: 1; }
+  .manage-item-title-link:hover{ color: var(--bay); }
+  .manage-off-badge{
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-soft); border: 1px solid var(--border); padding: 3px 6px;
+  }
+  .manage-item-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .manage-arrow, .manage-remove{
+    width: 30px; height: 30px; border-radius: 0;
+    border: 1px solid var(--border); background: transparent; color: var(--ink-soft);
+    cursor: pointer; font-size: 12px;
+  }
+  .manage-arrow:disabled{ opacity: 0.3; cursor: not-allowed; }
+  .manage-remove{ color: var(--danger); border-color: var(--danger-border); }
+  .manage-remove:hover{ background: var(--infrared); color: var(--void); }
+
+  /* ===== overview grid ===== */
+  .grid-header{ text-align:left; margin-bottom: 22px; }
+  .grid-header h1{ font-size: 52px; margin-bottom: 10px; }
+  .grid-header .sub{
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .win-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    counter-reset: tile list;
+  }
+  .grid-divider{
+    grid-column: 1 / -1;
+    display:flex; align-items:center; justify-content:space-between;
+    margin: 10px 0 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--ink);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .grid-divider:first-child{ margin-top: 0; }
+  .grid-divider::after{ content: '\2193'; font-size: 11px; }
+
+  .win-card{
+    position:relative;
+    min-height: 132px;
+    background: var(--shore);
+    border: none;
+    border-radius: 0;
+    padding: 12px 12px 30px;
+    text-align:left;
+    cursor:pointer;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition: filter 0.15s ease, background 0.2s ease;
+    box-shadow: none;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action: manipulation;
+  }
+  .win-card:hover{ filter: brightness(0.97); }
+  .win-card.tone-0{ background: var(--shore); }
+  .win-card.tone-1{ background: var(--ether); }
+  .win-card.tone-2{ background: var(--iris); }
+  .win-card.tone-3{ background: var(--bay); }
+  .win-card.tone-4{ background: var(--infrared); }
+
+  .win-card[data-id]{ counter-increment: tile; }
+  .win-card.todo-tile{ counter-increment: list; }
+  .win-card::after{
+    position:absolute; left: 12px; bottom: 10px; z-index:1;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: currentColor;
+    opacity: 0.7;
+  }
+  .win-card[data-id]::after{ content: 'No. ' counter(tile, decimal-leading-zero); }
+  .win-card.todo-tile::after{ content: 'List ' counter(list, decimal-leading-zero); }
+
+  .win-card.grid-dragging{ outline: 2px solid var(--ghost); outline-offset: 2px; opacity: 0.96; cursor: grabbing; transition: none; }
+  .win-card.resizing{ transition: none; outline: 2px solid var(--void); outline-offset: 2px; }
+
+  .win-resize-handle{
+    position:absolute; z-index:3; right: 4px; bottom: 4px;
+    width: 22px; height: 22px;
+    display:flex; align-items:center; justify-content:center;
+    background:none; border:none; padding:0;
+    cursor: ew-resize; touch-action: none;
+    color: currentColor; opacity: 0.4;
+  }
+  .win-resize-handle:hover{ opacity: 0.85; }
+  .win-resize-handle svg{ width:12px; height:12px; }
+
+  .win-card .win-icon{ display:none; }
+  .win-title{
+    position:relative; z-index:1;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 300;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: inherit;
+    padding-right: 26px;
+  }
+
+  /* completion: progress fills the panel in black, finished panels go "Void" */
+  .win-fill{
+    position:absolute; left:0; right:0; bottom:0;
+    background: rgba(11,11,11,0.12);
+    transition: height 0.3s ease;
+    z-index:0;
+  }
+  .win-card.win-done{ background: var(--void) !important; color: var(--ghost); }
+  .win-card.win-done .win-fill{ background: transparent; }
+
+  .win-check{
+    position:absolute; z-index:2; top: 10px; right: 10px;
+    width: 20px; height: 20px;
+    border-radius: 0;
+    border: 1px solid currentColor;
+    background: transparent;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink);
+    cursor:pointer; padding:0;
+  }
+  .win-card.win-done .win-check{ color: var(--ghost); }
+  .win-check.checked{ background: var(--ghost); border-color: var(--ghost); color: var(--void) !important; }
+  .win-check:focus-visible{ outline: 2px solid var(--bay); outline-offset:2px; }
+  .win-check-frac{ font-family: var(--mono); font-size: 8.5px; font-weight: 500; color: inherit; letter-spacing: -0.02em; }
+
+  .todo-count-badge{
+    position:absolute; top: 10px; right: 10px; z-index: 2;
+    min-width: 20px; height: 20px; padding: 0 5px;
+    border-radius: 0;
+    background: var(--void) !important;
+    color: var(--ghost);
+    font-family: var(--mono);
+    font-size: 10px; font-weight: 500;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* swatches & weekday picker */
+  .todo-color-row{ display:flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .todo-swatch{
+    width: 30px; height: 30px;
+    border-radius: 0;
+    border: 1px solid rgba(11,11,11,0.15);
+    cursor: pointer; padding: 0;
+  }
+  .todo-swatch.selected{ outline: 2px solid var(--void); outline-offset: 2px; box-shadow:none; }
+
+  .weekday-row{ display:flex; gap: 0; flex-wrap: nowrap; border: 1px solid var(--ink); }
+  .weekday-block{
+    flex: 1 1 0; min-width: 0;
+    padding: 12px 2px;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .weekday-block:last-child{ border-right: none; }
+  .weekday-block.selected{ background: var(--void); color: var(--ghost); }
+
+  /* ===== to-do list ===== */
+  .todo-list{ display:flex; flex-direction:column; gap: 6px; margin-bottom: 18px; }
+  .todo-row{ display:flex; align-items:stretch; gap: 6px; }
+  .todo-drag{
+    flex-shrink:0; width: 20px;
+    border: none; background: transparent; color: var(--ink-soft);
+    font-size: 16px; line-height:1; cursor: grab; touch-action: none;
+    display:flex; align-items:center; justify-content:center; padding:0; user-select:none;
+  }
+  .todo-row.dragging{ cursor: grabbing; box-shadow: 0 12px 24px -12px rgba(0,0,0,0.4); background: var(--card); }
+  .todo-pill{
+    flex:1;
+    padding: 14px 14px;
+    border-radius: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.25;
+    text-align: left;
+  }
+  .todo-check{
+    flex-shrink:0; width: 46px;
+    border-radius: 0;
+    border: 1px solid var(--ink);
+    background: transparent;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ghost);
+    cursor:pointer; padding:0;
+  }
+  .todo-check.checked{ background: var(--void); border-color: var(--void); }
+  .todo-row-done .todo-pill{ opacity: 0.45; text-decoration: line-through; }
+  .todo-delete{
+    flex-shrink:0; width: 30px;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    color: var(--danger);
+    cursor: pointer; font-size: 12px; padding:0;
+  }
+  .todo-delete:hover{ background: var(--infrared); color: var(--void); }
+  .todo-section-label{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    margin: 10px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  /* ===== links in a window ===== */
+  .link-list{ display:flex; flex-direction:column; gap: 6px; }
+  .link-row{ display:flex; align-items:stretch; gap: 6px; }
+  .link-drag{
+    flex-shrink:0; width: 20px;
+    background:none; border:none;
+    color: var(--ink-soft); font-size: 16px;
+    cursor: grab; touch-action: none;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .link-row.dragging{ z-index: 5; box-shadow: 0 12px 24px -12px rgba(0,0,0,0.4); background: var(--card); }
+  .link-row-btn{ flex:1; }
+  .link-no-url{ cursor: default; justify-content: flex-start; }
+  .link-check{
+    flex-shrink:0; width: 50px;
+    border-radius: 0;
+    border: 1px solid var(--ink);
+    background: transparent;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ghost);
+    cursor:pointer; padding:0;
+  }
+  .link-check.checked{ background: var(--bay); border-color: var(--bay); color: var(--void); }
+  .link-check:focus-visible{ outline: 2px solid var(--bay); outline-offset:2px; }
+
+  .link-edit-row{ display:flex; align-items:flex-start; gap: 8px; margin-bottom: 12px; }
+  .link-edit-fields{ flex:1; display:flex; flex-direction:column; gap: 6px; }
+  .link-remove-btn{
+    flex-shrink:0; width: 34px; height: 34px;
+    border-radius: 0;
+    border: 1px solid var(--danger-border);
+    background: transparent; color: var(--danger);
+    cursor:pointer; font-size: 12px;
+  }
+  .link-remove-btn:hover{ background: var(--infrared); color: var(--void); }
+  .link-edit-group{
+    border-top: 1px solid var(--ink);
+    padding: 14px 0 2px;
+    margin-bottom: 6px;
+    background: transparent;
+  }
+  .link-schedule-row .edit-field{ margin-bottom: 0 !important; }
+  .link-schedule-row .weekday-block{ padding: 9px 2px; font-size: 9.5px; }
+
+  /* ===== progress ===== */
+  .period-tabs{ display:flex; gap: 0; margin: 0 0 22px; border: 1px solid var(--ink); }
+  .period-tab{
+    flex:1; padding: 11px 0;
+    border-radius: 0; border: none; border-right: 1px solid var(--ink);
+    background: transparent; color: var(--ink);
+    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer;
+  }
+  .period-tab:last-child{ border-right:none; }
+  .period-tab.active{ background: var(--void); color: var(--ghost); }
+
+  .progress-list{ display:flex; flex-direction:column; gap: 0; border-top: 1px solid var(--ink); }
+  .progress-card{
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 18px 0 18px;
+    background: transparent;
+  }
+  .progress-card-top{ display:flex; align-items:center; justify-content:space-between; gap: 12px; }
+  .progress-card-heading{ display:flex; align-items:center; gap: 12px; min-width:0; }
+  .progress-card-icon{ display:none; }
+  .progress-card-title{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .progress-card-count{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .progress-ring{ flex-shrink:0; }
+  .progress-ring-label{ font-family: var(--mono); font-weight: 500; font-size: 11px; fill: var(--ink); }
+  .progress-trail{ display:flex; gap: 3px; margin-top: 14px; }
+  .progress-trail-empty{ font-size: 12px; color: var(--ink-soft); margin: 14px 0 0; }
+  .progress-dot{
+    flex:1 1 0; height: 22px; min-width:0;
+    border-radius: 0;
+    background: transparent;
+    border: 1px solid var(--border);
+  }
+  .progress-dot-done{ background: var(--void); border-color: var(--void); }
+  .progress-dot-partial{ background: var(--shore); border-color: var(--shore); }
+  .progress-dot-missed{ background: rgba(11,11,11,0.035); }
+  .progress-dot-today{ box-shadow: inset 0 -3px 0 var(--infrared); }
+  .progress-bar-track{ height: 6px; border-radius: 0; background: rgba(11,11,11,0.08); overflow: hidden; }
+  .progress-bar-fill{ height: 100%; border-radius: 0; background: var(--void); }
+  .progress-sublist{
+    display:flex; flex-direction:column; gap: 9px;
+    margin-top: 16px; padding-top: 0; border-top: none;
+  }
+  .progress-subitem{ display:grid; grid-template-columns: auto minmax(0,1fr) auto; align-items:center; gap: 10px; }
+  .progress-subitem-dot{ width: 8px; height: 8px; border-radius: 0; flex-shrink:0; }
+  .progress-subitem-title{
+    color: var(--ink); font-weight: 400; font-size: 12.5px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .progress-subitem .progress-bar-track{ display:none; }
+  .progress-subitem-count{ color: var(--ink-soft); font-family: var(--mono); font-size: 10.5px; flex-shrink:0; }
+  @media (min-width: 420px){
+    .progress-subitem{ grid-template-columns: auto minmax(0,1fr) 84px auto; }
+    .progress-subitem .progress-bar-track{ display:block; }
+  }
+  .progress-bar-track.thin{ height: 4px; }
+
+  /* ===== weight / misc ===== */
+  .weight-row{ display:flex; gap:8px; align-items:stretch; margin-bottom:18px; }
+  .weight-input{ flex:1; font-family: var(--serif); font-size:28px; font-weight:300; padding: 10px 14px; }
+  .unit-toggle{ display:flex; border:1px solid var(--ink); font-family: var(--mono); font-size:11px; text-transform:uppercase; }
+  .unit-toggle button{ border:none; background: transparent; padding:10px 14px; cursor:pointer; color: var(--ink); font-family:inherit; }
+  .unit-toggle button.active{ background: var(--void); color: var(--ghost); }
+  .save-msg{
+    font-family: var(--mono); font-size:10.5px; letter-spacing:0.06em; text-transform: uppercase;
+    color: var(--ink); min-height: 18px; margin: 10px 0 0;
+  }
+  .spark{ display:flex; align-items:flex-end; gap:3px; height:60px; margin: 4px 0 24px; }
+  .spark .bar{ flex:1; background: var(--void); border-radius: 0; min-height:4px; }
+  .spark .bar:last-child{ background: var(--infrared); }
+  .spark-empty{ font-size:13px; color: var(--ink-soft); margin: 4px 0 24px; }
+
+  .intro{ text-align:left; padding: 20px 0; }
+  .start-btn{ width:100%; justify-content:center; }
+  .complete{ text-align:left; padding: 20px 0 6px; }
+  .stamp{
+    width:84px; height:84px; margin: 0 0 20px;
+    border: 1px solid var(--void); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; color: var(--void);
+  }
+  .restart{
+    background: none; border: 1px solid var(--ink); border-radius: 0;
+    padding: 12px 18px; font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    cursor:pointer; color: var(--ink); margin-top:8px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  @media (max-width:480px){
+    .card{ padding: 24px 18px 50px; }
+    .card::after{ left: 18px; right: 18px; }
+    h1{ font-size:36px; }
+    .grid-header h1{ font-size: 44px; }
+    .win-card{ min-height: 118px; }
+    .win-title{ font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="arc-wrap">
+    <svg viewBox="0 0 400 34" preserveAspectRatio="none">
+      <line x1="0" y1="17" x2="400" y2="17" stroke="rgba(243,242,238,0.22)" stroke-width="1"/>
+      <g stroke="rgba(243,242,238,0.35)" stroke-width="1"><line x1="0" y1="11" x2="0" y2="23"/><line x1="100" y1="13" x2="100" y2="21"/><line x1="200" y1="13" x2="200" y2="21"/><line x1="300" y1="13" x2="300" y2="21"/><line x1="400" y1="11" x2="400" y2="23"/></g>
+      <circle id="sunDot" class="sun" cx="0" cy="17" r="5" fill="#F25A45"/>
+    </svg>
+  </div>
+  <div class="steplabel" id="stepLabel"></div>
+  <div class="card" id="card"></div>
+  <div class="outer-actions" id="outerActions"></div>
+</div>
+
+<script>
+// IndexedDB-backed storage shim: more resilient than localStorage for iOS "Add to Home Screen" apps.
+// Falls back to localStorage if IndexedDB is unavailable.
+const DB_NAME = 'daily-routine-db';
+const STORE_NAME = 'kv';
+let dbPromise = null;
+function openDB(){
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(STORE_NAME); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return dbPromise;
+}
+async function idbGet(key){
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbSet(key, value){
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put(value, key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function idbDelete(key){
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).delete(key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function idbKeys(){
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).getAllKeys();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+const hasIDB = typeof indexedDB !== 'undefined';
+
+window.storage = {
+  async get(key, shared){
+    try{
+      if (hasIDB){
+        const value = await idbGet(key);
+        if (value === undefined) return null;
+        return { key, value, shared: !!shared };
+      }
+      const raw = localStorage.getItem(key);
+      if (raw === null) return null;
+      return { key, value: raw, shared: !!shared };
+    }catch(e){ return null; }
+  },
+  async set(key, value, shared){
+    try{
+      if (hasIDB){ await idbSet(key, value); }
+      else { localStorage.setItem(key, value); }
+      return { key, value, shared: !!shared };
+    }catch(e){ return null; }
+  },
+  async delete(key, shared){
+    try{
+      let existed = false;
+      if (hasIDB){
+        existed = (await idbGet(key)) !== undefined;
+        await idbDelete(key);
+      } else {
+        existed = localStorage.getItem(key) !== null;
+        localStorage.removeItem(key);
+      }
+      return { key, deleted: existed, shared: !!shared };
+    }catch(e){ return null; }
+  },
+  async list(prefix, shared){
+    try{
+      let keys;
+      if (hasIDB){ keys = await idbKeys(); }
+      else {
+        keys = [];
+        for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+      }
+      if (prefix) keys = keys.filter(k => String(k).startsWith(prefix));
+      return { keys, prefix, shared: !!shared };
+    }catch(e){ return null; }
+  }
+};
+
+// Best-effort request to protect this site's storage from iOS eviction.
+if (navigator.storage && navigator.storage.persist){
+  navigator.storage.persist().catch(()=>{});
+}
+
+const ICONS = {
+  news: `<svg class="icon" viewBox="0 0 44 44"><rect x="6" y="10" width="32" height="26" rx="2"/><path d="M6 16h32"/><path d="M12 22h8"/><path d="M12 27h8"/><path d="M25 22h7M25 27h7M25 32h7"/></svg>`,
+  book: `<svg class="icon" viewBox="0 0 44 44"><path d="M22 12c-3-3-9-4-14-3v24c5-1 11 0 14 3 3-3 9-4 14-3V9c-5-1-11 0-14 3z"/><path d="M22 12v24"/></svg>`,
+  beads: `<svg class="icon" viewBox="0 0 44 44"><circle cx="22" cy="9" r="3.2"/><circle cx="32" cy="14" r="3.2"/><circle cx="36" cy="23" r="3.2"/><circle cx="32" cy="32" r="3.2"/><circle cx="22" cy="37" r="3.2"/><circle cx="12" cy="32" r="3.2"/><circle cx="8" cy="23" r="3.2"/><circle cx="12" cy="14" r="3.2"/></svg>`,
+  calendar: `<svg class="icon" viewBox="0 0 44 44"><rect x="7" y="10" width="30" height="26" rx="3"/><path d="M7 18h30"/><path d="M15 6v8M29 6v8"/><circle cx="16" cy="26" r="1.6" fill="currentColor" stroke="none"/><circle cx="22" cy="26" r="1.6" fill="currentColor" stroke="none"/><circle cx="28" cy="26" r="1.6" fill="currentColor" stroke="none"/></svg>`,
+  ball: `<svg class="icon" viewBox="0 0 44 44"><circle cx="22" cy="22" r="15"/><path d="M22 12l6 4.5-2.3 7.2h-7.4L16 16.5z"/><path d="M22 12V7M28 16.5l4.5-2.7M28.7 23.7l4 3.4M15.3 23.7l-4 3.4M16 16.5L11.5 13.8"/></svg>`,
+  mail: `<svg class="icon" viewBox="0 0 44 44"><rect x="6" y="11" width="32" height="22" rx="3"/><path d="M7 13l15 12 15-12"/></svg>`,
+  scale: `<svg class="icon" viewBox="0 0 44 44"><rect x="7" y="7" width="30" height="30" rx="6"/><circle cx="22" cy="24" r="7"/><path d="M22 24l4-5M17 13h10"/></svg>`,
+  headphones: `<svg class="icon" viewBox="0 0 44 44"><path d="M8 24v-2a14 14 0 0 1 28 0v2"/><rect x="6" y="24" width="8" height="11" rx="3"/><rect x="30" y="24" width="8" height="11" rx="3"/></svg>`,
+  camera: `<svg class="icon" viewBox="0 0 44 44"><rect x="6" y="12" width="32" height="24" rx="5"/><circle cx="22" cy="24" r="7"/><path d="M16 12l2.5-4h7L28 12"/></svg>`,
+  ghost: `<svg class="icon" viewBox="0 0 44 44"><path d="M10 34V20a12 12 0 0 1 24 0v14l-4-3-4 3-4-3-4 3-4-3z"/><circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none"/><circle cx="27" cy="20" r="1.4" fill="currentColor" stroke="none"/></svg>`,
+  custom: `<svg class="icon" viewBox="0 0 44 44"><rect x="7" y="7" width="30" height="30" rx="8"/><path d="M22 15v14M15 22h14"/></svg>`,
+  chat: `<svg class="icon" viewBox="0 0 44 44"><path d="M7 12h30v18H18l-7 6v-6H7z"/><path d="M14 19h16M14 24h11"/></svg>`,
+  chart: `<svg class="icon" viewBox="0 0 44 44"><path d="M7 37V7M7 37h30"/><rect x="13" y="24" width="6" height="9"/><rect x="22" y="17" width="6" height="16"/><rect x="31" y="12" width="6" height="21"/></svg>`,
+  todo: `<svg class="icon" viewBox="0 0 44 44"><rect x="7" y="6" width="30" height="32" rx="4"/><path d="M13 15l2.5 2.5L20 13"/><path d="M24 15h9"/><path d="M13 24l2.5 2.5L20 22"/><path d="M24 24h9"/><path d="M13 33h9"/></svg>`
+};
+
+function iconFor(s){ return ICONS[s.iconKey] || ICONS.custom; }
+
+const DEFAULT_STEPS = [
+  {
+    id:"athkar", iconKey:"beads", title:"🕋 Athkar + Quran",
+    sub:"",
+    links:[
+      {label:"Open App", url:"https://apps.apple.com/sa/app/golden-quran-%D8%A7%D9%84%D9%85%D8%B5%D8%AD%D9%81-%D8%A7%D9%84%D8%B0%D9%87%D8%A8%D9%8A/id852497554", primary:true}
+    ]
+  },
+  {
+    id:"talk", iconKey:"custom", title:"🔋Power",
+    sub:"Reach out to someone you care about.",
+    links:[
+      {label:"Reflect on confidence", url:"-", primary:true},
+      {label:"Talk to someone", url:"-", primary:false}
+    ]
+  },
+  {
+    id:"bills", iconKey:"custom", title:"💊 Take Pills",
+    sub:"Antihistamine+ Magnesium + Createin",
+    links:[]
+  },
+  {
+    id:"alarabiya", iconKey:"news", title:"📰 News",
+    sub:"A second angle on today's news.",
+    links:[
+      {label:"Al Arabiya", url:"https://apps.apple.com/sa/app/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9-alarabiya/id542914362", primary:true},
+      {label:"BBC", url:"https://www.bbc.com/news", primary:false},
+      {label:"Match check", url:"https://apps.apple.com/sa/app/365scores-live-scores-news/id571801488", primary:false},
+      {label:"٨", url:"https://www.snapchat.com/add/thmanyahsports", primary:false}
+    ]
+  },
+  {
+    id:"calendar", iconKey:"calendar", title:"🗓️ Calendar + Mail",
+    sub:"A quick look at the day ahead — meetings, plans, gaps.",
+    links:[
+      {label:"Calendar", url:"https://apps.apple.com/sa/app/calendar/id1108185179", primary:true},
+      {label:"Mail", url:"https://apps.apple.com/sa/app/mail/id1108187098", primary:false}
+    ]
+  },
+  {
+    id:"stocks", iconKey:"custom", title:"📈 Stocks",
+    sub:"See how your portfolio is doing today.",
+    links:[
+      {label:"Open App", url:"https://apps.apple.com/sa/app/sahm-stock-trading/id1630074503", primary:true}
+    ]
+  },
+  {
+    id:"podcast", iconKey:"headphones", title:"☕️ English",
+    sub:"Listen to an English-language podcast to keep your ear tuned.",
+    links:[
+      {label:"⚫️ BBC Businesses", url:"https://podcasts.apple.com/sa/podcast/business-daily/id261786876", primary:true},
+      {label:"🟡 English Businesses", url:"https://podcasts.apple.com/sa/podcast/business-english-from-all-ears-english/id1650591741", primary:false},
+      {label:"⚪️ English speaking practice", url:"https://chatgpt.com/g/g-p-698dc7995f2c8191841e3fbd133ac12b", primary:false},
+      {label:"🔵 Transitions", url:"https://apps.apple.com/sa/app/google-translate/id414706506", primary:false}
+    ]
+  },
+  {
+    id:"reading", iconKey:"book", title:"📖 Book reading",
+    sub:"Read at least 5 pages of a book.",
+    links:[
+      {label:"Before Coffee Gets Cold", url:"--", primary:true},
+      {label:"Hydrogen", url:"https://www.iea.org/energy-system/low-emissions-fuels/hydrogen", primary:false},
+      {label:"Energy", url:"https://www.nature.com/nenergy/", primary:false},
+      {label:"Materials", url:"https://www.nature.com/nmat/", primary:false},
+      {label:"3D Printing", url:"https://www.tctmagazine.com/", primary:false}
+    ]
+  },
+  {
+    id:"custom-weight-msqllgua", iconKey:"custom", title:"🍉 Health",
+    sub:"",
+    links:[
+      {label:"Log body’s Weight", url:"https://apps.apple.com/sa/app/renpho-health/id1543340610", primary:true},
+      {label:"Walk 10000 steps", url:"https://apps.apple.com/sa/app/pedometer/id712286167", primary:false},
+      {label:"Gym", url:"https://plate-plan-maker.vercel.app/", primary:false}
+    ]
+  }
+];
+
+const DEFAULT_NOTES = {
+  "athkar": "أبدأ يومي بأذكار الصباح لأشحن نفسي روحيًا وأحافظ على صلتي بالله قبل أي شيء آخر.",
+  "bills": "أتابع فواتيري وأسددها في وقتها لأتجنب الرسوم المتأخرة وأحافظ على تنظيم أموري المالية.",
+  "alarabiya": "أتابع أهم الأخبار المحلية والعالمية يوميًا لأبقى مطلعًا وواعيًا بما يحدث حولي في العالم.",
+  "calendar": "أراجع مواعيدي واجتماعاتي لهذا اليوم لأنظّم وقتي وأبدأ يومي بخطة واضحة.",
+  "podcast": "أستمع إلى بودكاست باللغة الإنجليزية يوميًا لتحسين مهارتي في الاستماع والتعرّض المستمر للغة.",
+  "reading": "أقرأ 5 صفحات على الأقل يوميًا من كتاب لتوسيع معرفتي وبناء عادة القراءة المستمرة.",
+  "talk": "أتواصل مع شخص مقرب يوميًا للحفاظ على علاقاتي الاجتماعية وعدم الانعزال.",
+  "stocks": "أتابع أسهمي واستثماراتي يوميًا لأبقى مطلعًا على أدائها واتخاذ قرارات مدروسة."
+};
+
+let STEPS = [];
+let view = 'grid'; // 'grid' | 'detail' | 'manage' | 'add' | 'progress' | 'todo'
+let activeId = null;
+let unit = 'kg';
+let skillNotes = {};
+let removeConfirmStep = null;
+let editingWindow = null; // step id currently being edited (title/sub/links)
+let editDraft = null;     // { title, sub, links: [{label,url}] }
+let addDraft = null;      // { title, sub, links: [{label,url}] } for the add-window form
+let completions = { day: '', done: {} };
+let history = {}; // { 'YYYY-MM-DD': { stepId: true, ... } }
+let linkHistory = {}; // { 'YYYY-MM-DD': { stepId: { linkIdx: true/false, ... } } } — per-link record, tracked from the day this feature shipped onward
+let progressPeriod = 'week';
+let todos = []; // [{ id, listId, text, color, done }] — one-off tasks, separate from habit windows
+let todoCleanupDate = null; // last date (YYYY-MM-DD) completed tasks were auto-cleared
+let todoLists = []; // [{ id, title }] — one or more named to-do lists
+let activeTodoListId = null;
+let todoSelectedColor = null;
+let removeConfirmTodoList = null;
+let editingTodoListTitle = null;
+let todoListColorDraft = null;
+
+const TODO_COLORS = [
+  { key:'shore',    hex:'#F1D5B1' },
+  { key:'ether',    hex:'#A9C8C4' },
+  { key:'iris',     hex:'#9886E2' },
+  { key:'bay',      hex:'#3A78DB' },
+  { key:'infrared', hex:'#F25A45' },
+  { key:'stone',    hex:'#D9D6CF' }
+];
+const LIST_COLORS = [
+  ...TODO_COLORS
+];
+function listColorOf(list){
+  return (list && list.color) || LIST_COLORS[0].hex;
+}
+function todoIconWithColor(hex){
+  const strokeColor = `color-mix(in srgb, ${hex} 75%, #F5F6FA)`;
+  return ICONS.todo.replace('<svg ', `<svg style="stroke:${strokeColor};" `);
+}
+
+const card = document.getElementById('card');
+const stepLabel = document.getElementById('stepLabel');
+const sunDot = document.getElementById('sunDot');
+const root = document.documentElement;
+const outerActions = document.getElementById('outerActions');
+
+// ---------- storage ----------
+async function loadSteps(){
+  try{
+    const res = await window.storage.get('routine-steps', false);
+    if (res && res.value){
+      const parsed = JSON.parse(res.value);
+      if (Array.isArray(parsed)) return parsed; // trust the saved state, even if the user emptied it
+    }
+  }catch(e){}
+  return DEFAULT_STEPS.map(s => ({...s, links: s.links ? s.links.map(l=>({...l})) : undefined}));
+}
+async function saveSteps(){
+  try{ await window.storage.set('routine-steps', JSON.stringify(STEPS), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function loadSkillNotes(){
+  try{
+    const res = await window.storage.get('skill-notes', false);
+    return res ? JSON.parse(res.value) : {};
+  }catch(e){ return {}; }
+}
+async function saveSkillNotes(){
+  try{ await window.storage.set('skill-notes', JSON.stringify(skillNotes), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function loadCompletions(){
+  try{
+    const res = await window.storage.get('completions', false);
+    if (res) return JSON.parse(res.value);
+  }catch(e){}
+  return { day: todayKey(), done: {} };
+}
+async function saveCompletions(){
+  try{ await window.storage.set('completions', JSON.stringify(completions), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function loadHistory(){
+  try{
+    const res = await window.storage.get('completion-history', false);
+    return res ? JSON.parse(res.value) : {};
+  }catch(e){ return {}; }
+}
+async function saveHistory(){
+  try{ await window.storage.set('completion-history', JSON.stringify(history), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function loadLinkHistory(){
+  try{
+    const res = await window.storage.get('link-history', false);
+    return res ? JSON.parse(res.value) : {};
+  }catch(e){ return {}; }
+}
+async function saveLinkHistory(){
+  try{ await window.storage.set('link-history', JSON.stringify(linkHistory), false); }
+  catch(e){ console.error('storage error', e); }
+}
+const BACKUP_KEYS = ['routine-steps', 'skill-notes', 'completions', 'completion-history', 'link-history', 'weight-entries', 'todo-list', 'todo-lists'];
+
+async function exportBackup(){
+  const data = {};
+  for (const k of BACKUP_KEYS){
+    try{
+      const res = await window.storage.get(k, false);
+      if (res) data[k] = res.value;
+    }catch(e){}
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = localDateKey(new Date());
+  a.download = `daily-routine-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function importBackup(file){
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    for (const k of BACKUP_KEYS){
+      if (data[k] !== undefined){
+        await window.storage.set(k, data[k], false);
+      }
+    }
+    STEPS = await loadSteps();
+    skillNotes = await loadSkillNotes();
+    completions = await loadCompletions();
+    history = await loadHistory();
+    linkHistory = await loadLinkHistory();
+    todos = await loadTodos();
+    const loadedLists = await loadTodoLists();
+    if (loadedLists) todoLists = loadedLists;
+    view = 'grid';
+    render();
+  }catch(e){
+    alert('Could not read that backup file. Make sure it\'s a JSON file exported from this app.');
+  }
+}
+
+async function loadWeights(){
+  try{
+    const res = await window.storage.get('weight-entries', false);
+    return res ? JSON.parse(res.value) : [];
+  }catch(e){ return []; }
+}
+async function saveWeights(entries){
+  try{ await window.storage.set('weight-entries', JSON.stringify(entries), false); }
+  catch(e){ console.error('storage error', e); }
+}
+
+async function loadTodos(){
+  try{
+    const res = await window.storage.get('todo-list', false);
+    const list = res ? JSON.parse(res.value) : [];
+    // backfill 'order' for todos saved before drag-reorder existed
+    const perListCount = {};
+    list.forEach(t=>{
+      if (typeof t.order !== 'number'){
+        perListCount[t.listId] = (perListCount[t.listId] ?? -1) + 1;
+        t.order = perListCount[t.listId];
+      }
+    });
+    return list;
+  }catch(e){ return []; }
+}
+async function saveTodos(){
+  try{ await window.storage.set('todo-list', JSON.stringify(todos), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function loadTodoLists(){
+  try{
+    const res = await window.storage.get('todo-lists', false);
+    if (res && res.value){
+      const parsed = JSON.parse(res.value);
+      if (Array.isArray(parsed)) return parsed; // trust the saved state, even if the user emptied it
+    }
+  }catch(e){}
+  return null; // signals "not yet initialized" (truly first run)
+}
+async function saveTodoLists(){
+  try{ await window.storage.set('todo-lists', JSON.stringify(todoLists), false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function addTodo(text, color, listId){
+  const id = 'todo-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  const maxOrder = todos.filter(t=>t.listId===listId).reduce((m,t)=> Math.max(m, t.order ?? 0), -1);
+  todos.push({ id, listId, text, color, done: false, order: maxOrder + 1 });
+  await saveTodos();
+  render();
+}
+async function reorderTodos(listId, orderedIds){
+  const rank = {};
+  orderedIds.forEach((id, i)=>{ rank[id] = i; });
+  todos.forEach(t=>{
+    if (t.listId === listId && Object.prototype.hasOwnProperty.call(rank, t.id)) t.order = rank[t.id];
+  });
+  await saveTodos();
+}
+async function toggleTodoDone(id){
+  const t = todos.find(x => x.id === id);
+  if (t) t.done = !t.done;
+  await saveTodos();
+  render();
+}
+async function deleteTodo(id){
+  todos = todos.filter(x => x.id !== id);
+  await saveTodos();
+  render();
+}
+async function loadTodoCleanupDate(){
+  try{
+    const res = await window.storage.get('todo-cleanup-date', false);
+    return res ? res.value : null;
+  }catch(e){ return null; }
+}
+async function saveTodoCleanupDate(dateKey){
+  try{ await window.storage.set('todo-cleanup-date', dateKey, false); }
+  catch(e){ console.error('storage error', e); }
+}
+async function cleanupCompletedTodosIfNewDay(){
+  const t = todayKey();
+  if (todoCleanupDate === null){
+    // first time this feature runs — don't nuke today's completed tasks immediately,
+    // just start tracking from today. Cleanup begins at the next midnight rollover.
+    todoCleanupDate = t;
+    await saveTodoCleanupDate(t);
+    return false;
+  }
+  if (todoCleanupDate === t) return false; // already cleaned up today
+  const before = todos.length;
+  todos = todos.filter(x => !x.done);
+  todoCleanupDate = t;
+  await saveTodoCleanupDate(t);
+  if (todos.length !== before) await saveTodos();
+  return true;
+}
+async function addTodoList(title){
+  const id = 'todo-list-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  todoLists.push({ id, title });
+  await saveTodoLists();
+  view = 'grid';
+  render();
+}
+async function removeTodoList(id){
+  todoLists = todoLists.filter(l => l.id !== id);
+  todos = todos.filter(t => t.listId !== id);
+  await saveTodoLists();
+  await saveTodos();
+  removeConfirmTodoList = null;
+  if (activeTodoListId === id){ activeTodoListId = null; view = 'grid'; }
+  render();
+}
+async function renameTodoList(id, newTitle, color){
+  const list = todoLists.find(l => l.id === id);
+  if (list){
+    if (newTitle.trim()) list.title = newTitle.trim();
+    if (color) list.color = color;
+  }
+  await saveTodoLists();
+  editingTodoListTitle = null;
+  render();
+}
+
+function todayKey(){
+  return localDateKey(new Date());
+}
+function localDateKey(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function fmtDate(d){
+  return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+}
+function ensureToday(){
+  const t = todayKey();
+  if (completions.day !== t){
+    completions = { day: t, done: {}, links: {} };
+  }
+  if (!completions.links) completions.links = {};
+}
+
+// A window with no schedule is due every day.
+// New format: schedule.days = array of weekday numbers (0=Sun,1=Mon...6=Sat) it recurs on.
+// Legacy format (interval/startDate) is still honored for windows not yet re-saved.
+// A window with no schedule is due every day.
+// New format: schedule.days = array of weekday numbers (0=Sun,1=Mon...6=Sat) it recurs on.
+// Legacy format (interval/startDate) is still honored for windows not yet re-saved.
+function weekdayOf(dateKey){
+  return new Date(dateKey + 'T00:00:00').getDay(); // 0=Sun...6=Sat
+}
+function isWindowScheduledOnDate(s, dateKey){
+  if (!s.schedule) return true;
+  if (Array.isArray(s.schedule.days)) return s.schedule.days.includes(weekdayOf(dateKey));
+  if (!s.schedule.interval || s.schedule.interval <= 1) return true;
+  const start = s.schedule.startDate;
+  if (!start) return true;
+  const startD = new Date(start + 'T00:00:00');
+  const d = new Date(dateKey + 'T00:00:00');
+  const diffDays = Math.round((d - startD) / 86400000);
+  if (diffDays < 0) return false;
+  return diffDays % s.schedule.interval === 0;
+}
+// Per-link scheduling: a link with no schedule is due every day it's shown.
+function isLinkScheduledOnDate(link, dateKey){
+  if (!link || !link.schedule) return true;
+  if (Array.isArray(link.schedule.days)) return link.schedule.days.includes(weekdayOf(dateKey));
+  return true;
+}
+function isDueToday(s){
+  const t = todayKey();
+  if (!isWindowScheduledOnDate(s, t)) return false;
+  // If this window's links each carry their own day schedule, hide the whole
+  // window on days when none of its links are due.
+  if (Array.isArray(s.links) && s.links.length && !s.links.some(l => isLinkScheduledOnDate(l, t))){
+    return false;
+  }
+  return true;
+}
+function isLinkDueToday(link){
+  return isLinkScheduledOnDate(link, todayKey());
+}
+
+// Returns { checked, total, ratio, isFull, hasLinks } for a step —
+// windows with multiple links are tracked per-link; others use the single done flag.
+function stepProgress(s){
+  const allLinks = s.links || [];
+  // Only links scheduled for today count toward this window's progress.
+  const dueIdxs = [];
+  allLinks.forEach((l,i)=>{ if (isLinkDueToday(l)) dueIdxs.push(i); });
+  if (!dueIdxs.length){
+    const done = !!completions.done[s.id];
+    return { checked: done ? 1 : 0, total: 1, ratio: done ? 1 : 0, isFull: done, hasLinks: false };
+  }
+  let linkState = completions.links && completions.links[s.id];
+  if (!linkState && completions.done && completions.done[s.id]){
+    // legacy data from before per-link tracking existed — treat as fully checked
+    linkState = {};
+    dueIdxs.forEach(i => { linkState[i] = true; });
+  }
+  linkState = linkState || {};
+  let checked = 0;
+  dueIdxs.forEach(i => { if (linkState[i]) checked++; });
+  const total = dueIdxs.length;
+  const ratio = checked / total;
+  return { checked, total, ratio, isFull: checked === total, hasLinks: true };
+}
+
+async function recordHistory(id, isFull){
+  const key = todayKey();
+  if (!history[key]) history[key] = {};
+  if (isFull) history[key][id] = true; else delete history[key][id];
+  await saveHistory();
+}
+
+// Records which of today's due links were actually checked, so the Progress
+// page can show real per-task completion going forward.
+async function recordLinkHistory(id, s){
+  const key = todayKey();
+  const linkState = (completions.links && completions.links[id]) || {};
+  const dayRecord = {};
+  (s.links || []).forEach((l,i)=>{
+    if (!isLinkDueToday(l)) return; // only record availability for links due today
+    dayRecord[i] = !!linkState[i];
+  });
+  if (!linkHistory[key]) linkHistory[key] = {};
+  linkHistory[key][id] = dayRecord;
+  await saveLinkHistory();
+}
+
+// Bulk toggle: used by the grid checkmark and the detail "Mark complete" button.
+async function toggleComplete(id){
+  ensureToday();
+  const s = STEPS.find(x => x.id === id);
+  if (!s) return;
+  const prog = stepProgress(s);
+  const nowDone = !prog.isFull;
+  if (prog.hasLinks){
+    const state = { ...((completions.links && completions.links[id]) || {}) };
+    (s.links || []).forEach((l,i)=>{
+      if (!isLinkDueToday(l)) return; // leave untouched links not scheduled today as-is
+      if (nowDone) state[i] = true; else delete state[i];
+    });
+    completions.links[id] = state;
+  }
+  completions.done[id] = nowDone;
+  await saveCompletions();
+  await recordHistory(id, nowDone);
+  if (prog.hasLinks) await recordLinkHistory(id, s);
+  render();
+}
+
+// Per-link toggle: checking/unchecking one link's square.
+async function toggleLinkComplete(id, idx){
+  ensureToday();
+  const s = STEPS.find(x => x.id === id);
+  if (!s) return;
+  if (!completions.links[id]) completions.links[id] = {};
+  completions.links[id][idx] = !completions.links[id][idx];
+  const prog = stepProgress(s);
+  completions.done[id] = prog.isFull;
+  await saveCompletions();
+  await recordHistory(id, prog.isFull);
+  await recordLinkHistory(id, s);
+  render();
+}
+
+// ---------- step management ----------
+function slugify(str){
+  return 'custom-' + str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,30) + '-' + Date.now().toString(36);
+}
+async function removeStep(id){
+  const idx = STEPS.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  STEPS.splice(idx, 1);
+  delete skillNotes[id];
+  delete completions.done[id];
+  await saveSteps();
+  await saveSkillNotes();
+  await saveCompletions();
+  removeConfirmStep = null;
+  if (activeId === id){ view = 'grid'; activeId = null; }
+  render();
+}
+async function moveStep(id, dir){
+  const idx = STEPS.findIndex(s => s.id === id);
+  const target = idx + dir;
+  if (idx === -1 || target < 0 || target >= STEPS.length) return;
+  [STEPS[idx], STEPS[target]] = [STEPS[target], STEPS[idx]];
+  await saveSteps();
+  render();
+}
+async function migrateSteps(){
+  // No forced additions/renames anymore — DEFAULT_STEPS now reflects the
+  // actual curated routine, so nothing should be auto-inserted on top of it.
+  return;
+}
+
+// ---------- progress arc ----------
+function arcPoint(t){
+  return { x: t * 400, y: 17 };
+}
+function setProgress(){
+  ensureToday();
+  const total = STEPS.length;
+  const done = STEPS.filter(s => completions.done[s.id]).length;
+  const t = total ? done / total : 0;
+  root.style.setProperty('--t', t.toFixed(3));
+  const p = arcPoint(t);
+  sunDot.setAttribute('cx', p.x.toFixed(1));
+  sunDot.setAttribute('cy', p.y.toFixed(1));
+}
+
+// ---------- skill note ----------
+function renderSkillNote(s){
+  const note = skillNotes[s.id] || '';
+  const wrap = document.createElement('div');
+  wrap.className = 'skill-note';
+  wrap.innerHTML = `
+    <div class="skill-note-label">Skill I'm improving here</div>
+    <p class="skill-note-text ${note ? '' : 'skill-note-empty'}" dir="auto">${note ? note.replace(/</g,'&lt;') : 'Not set yet — edit this window to add one.'}</p>
+  `;
+  card.appendChild(wrap);
+}
+
+// ---------- weight detail ----------
+async function renderWeightStep(s){
+  const entries = await loadWeights();
+  const today = new Date().toDateString();
+  const todays = entries.find(e => e.day === today);
+
+  card.innerHTML = `
+    ${iconFor(s)}
+    <h1>${s.title}</h1>
+    <p class="sub">${s.sub}</p>
+    <div class="weight-row">
+      <input class="weight-input" id="weightInput" type="number" inputmode="decimal" step="0.1" dir="ltr"
+        placeholder="e.g. 74.5" value="${todays ? todays.value : ''}">
+      <div class="unit-toggle">
+        <button data-u="kg" class="${unit==='kg'?'active':''}">kg</button>
+        <button data-u="lb" class="${unit==='lb'?'active':''}">lb</button>
+      </div>
+    </div>
+    <div class="save-msg" id="saveMsg">${todays ? "Logged for today ✓" : ""}</div>
+    ${entries.length ? '<div class="spark" id="spark"></div>' : '<div class="spark-empty">Your last few entries will show up here once you start logging.</div>'}
+    <div class="actions">
+      <button class="btn btn-primary" id="saveWeightBtn">Save today's weight <span class="btn-arrow">↵</span></button>
+    </div>
+  `;
+
+  if (entries.length){
+    const last = entries.slice(-7);
+    const max = Math.max(...last.map(e=>e.value));
+    const min = Math.min(...last.map(e=>e.value));
+    const range = Math.max(max - min, 0.5);
+    const spark = document.getElementById('spark');
+    spark.innerHTML = last.map(e=>{
+      const h = 12 + ((e.value - min) / range) * 44;
+      return `<div class="bar" style="height:${h}px" title="${fmtDate(new Date(e.day))}: ${e.value}${e.unit}"></div>`;
+    }).join('');
+  }
+
+  card.querySelectorAll('.unit-toggle button').forEach(b=>{
+    b.addEventListener('click', ()=>{ unit = b.dataset.u; render(); });
+  });
+
+  document.getElementById('saveWeightBtn').addEventListener('click', async ()=>{
+    const val = parseFloat(document.getElementById('weightInput').value);
+    const msg = document.getElementById('saveMsg');
+    if (!val || val <= 0){ msg.textContent = "Enter a number first"; msg.style.color = '#FF6B57'; return; }
+    const filtered = entries.filter(e => e.day !== today);
+    filtered.push({ day: today, value: val, unit });
+    await saveWeights(filtered);
+    render();
+  });
+}
+
+// ---------- link detail (view mode) ----------
+const CHECK_SVG_SM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg>';
+
+function renderLinkStep(s){
+  const allLinks = s.links || [];
+  const linkState = (completions.links && completions.links[s.id]) || {};
+  // Links carrying their own schedule are hidden entirely on days they're not due.
+  const visible = allLinks.map((l,i)=>({l,i})).filter(({l}) => isLinkDueToday(l));
+  card.innerHTML = `
+    ${iconFor(s)}
+    <h1>${s.title}</h1>
+    ${s.sub ? `<p class="sub">${s.sub}</p>` : ''}
+    ${visible.length ? `<div class="link-list" id="linkListView">
+      ${visible.map(({l,i}) => {
+        const checked = !!linkState[i];
+        const hasUrl = !!(l.url && l.url.trim());
+        const item = hasUrl
+          ? `<a class="btn ${l.primary?'btn-primary':'btn-secondary'} link-row-btn" href="${l.url}" target="_blank" rel="noopener">${l.label} <span class="btn-arrow">↗</span></a>`
+          : `<div class="btn ${l.primary?'btn-primary':'btn-secondary'} link-row-btn link-no-url">${l.label}</div>`;
+        return `
+        <div class="link-row" data-idx="${i}">
+          ${visible.length > 1 ? `<button class="link-drag" aria-label="Drag to reorder">⠿</button>` : ''}
+          ${item}
+          <button class="link-check ${checked?'checked':''}" data-idx="${i}" aria-label="${checked?'Mark link incomplete':'Mark link complete'}">${checked?CHECK_SVG_SM:''}</button>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+  `;
+  card.querySelectorAll('.link-check').forEach(btn=>{
+    btn.addEventListener('click', ()=> toggleLinkComplete(s.id, parseInt(btn.dataset.idx, 10)));
+  });
+  setupLinkDragReorder(s.id);
+}
+function setupLinkDragReorder(stepId){
+  const listEl = document.getElementById('linkListView');
+  if (!listEl) return;
+  listEl.querySelectorAll('.link-drag').forEach(handle=>{
+    handle.addEventListener('pointerdown', (e)=> beginLinkDrag(e, listEl, stepId));
+  });
+}
+function beginLinkDrag(e, listEl, stepId){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const row = e.target.closest('.link-row');
+  if (!row) return;
+  e.preventDefault();
+
+  const rows = Array.from(listEl.children).filter(el=> el.classList.contains('link-row'));
+  if (rows.length < 2) return;
+  const listRect = listEl.getBoundingClientRect();
+  const rects = rows.map(r=> r.getBoundingClientRect());
+  const GAP = 10;
+
+  listEl.style.height = listRect.height + 'px';
+  rows.forEach((r,i)=>{
+    r.style.position = 'absolute';
+    r.style.left = '0';
+    r.style.right = '0';
+    r.style.top = (rects[i].top - listRect.top) + 'px';
+    r.style.transition = 'top 0.18s ease';
+    r.style.width = '100%';
+  });
+  listEl.style.position = 'relative';
+
+  const startIndex = rows.indexOf(row);
+  row.style.transition = 'none';
+  row.style.zIndex = 5;
+  row.classList.add('dragging');
+
+  let order = rows.map(r=> r.dataset.idx);
+  const heightOf = idx => rects[rows.findIndex(r=> r.dataset.idx === idx)].height;
+  const startY = e.clientY;
+  const rowStartTop = rects[startIndex].top - listRect.top;
+
+  function topsFromOrder(){
+    const tops = {};
+    let c = 0;
+    order.forEach(idx=>{ tops[idx] = c; c += heightOf(idx) + GAP; });
+    return tops;
+  }
+
+  function onMove(ev){
+    const dy = ev.clientY - startY;
+    const newTop = rowStartTop + dy;
+    row.style.top = newTop + 'px';
+    const rowCenter = newTop + rects[startIndex].height / 2;
+
+    const fromIdx = order.indexOf(row.dataset.idx);
+    const tops = topsFromOrder();
+    let targetIdx = fromIdx;
+    for (let i = 0; i < order.length; i++){
+      if (order[i] === row.dataset.idx) continue;
+      const mid = tops[order[i]] + heightOf(order[i]) / 2;
+      if (i < fromIdx && rowCenter < mid){ targetIdx = i; break; }
+      if (i > fromIdx && rowCenter > mid){ targetIdx = i; }
+    }
+    if (targetIdx !== fromIdx){
+      order.splice(fromIdx, 1);
+      order.splice(targetIdx, 0, row.dataset.idx);
+      const newTops = topsFromOrder();
+      order.forEach(idx=>{
+        if (idx === row.dataset.idx) return;
+        const r = rows.find(rr=> rr.dataset.idx === idx);
+        r.style.top = newTops[idx] + 'px';
+      });
+    }
+  }
+
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    row.classList.remove('dragging');
+    row.style.zIndex = '';
+    const tops = topsFromOrder();
+    row.style.transition = 'top 0.18s ease';
+    row.style.top = tops[row.dataset.idx] + 'px';
+    setTimeout(async ()=>{
+      const oldIndices = order.map(idx => parseInt(idx, 10));
+      await reorderStepLinks(stepId, oldIndices);
+      render();
+    }, 180);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+async function reorderStepLinks(stepId, oldIndicesInNewOrder){
+  const step = STEPS.find(x=> x.id === stepId);
+  if (!step || !Array.isArray(step.links)) return;
+  const oldLinks = step.links;
+  const oldState = (completions.links && completions.links[stepId]) || {};
+
+  // Only links visible (due) today are draggable, so oldIndicesInNewOrder may be a
+  // subset of the full links array. Refill just those original slots in the new
+  // order and leave any hidden (not-due-today) links exactly where they were.
+  const visibleSet = new Set(oldIndicesInNewOrder);
+  const visibleSlots = oldLinks.map((_,i)=>i).filter(i => visibleSet.has(i));
+  const newLinks = oldLinks.slice();
+  const idxMap = {}; // old index -> new index
+  visibleSlots.forEach((slot, pos) => {
+    const oldIdx = oldIndicesInNewOrder[pos];
+    newLinks[slot] = oldLinks[oldIdx];
+    idxMap[oldIdx] = slot;
+  });
+  oldLinks.forEach((_, i) => { if (!visibleSet.has(i)) idxMap[i] = i; });
+
+  step.links = newLinks;
+  const newState = {};
+  Object.keys(oldState).forEach(oldIdxStr=>{
+    const oldIdx = parseInt(oldIdxStr, 10);
+    const newIdx = idxMap[oldIdx];
+    if (newIdx !== undefined && oldState[oldIdxStr]) newState[newIdx] = true;
+  });
+  if (!completions.links) completions.links = {};
+  completions.links[stepId] = newState;
+  await saveSteps();
+  await saveCompletions();
+}
+
+// ---------- unified window editor (title, description, dynamic optional links) ----------
+const WEEKDAY_BLOCKS = [
+  { day: 1, label: 'Mon' },
+  { day: 2, label: 'Tue' },
+  { day: 3, label: 'Wed' },
+  { day: 4, label: 'Thu' },
+  { day: 5, label: 'Fri' },
+  { day: 6, label: 'Sat' },
+  { day: 0, label: 'Sun' }
+];
+function renderScheduleHTML(idPrefix, selectedDays, label){
+  return `
+    <div class="edit-field" style="margin-bottom:16px;">
+      <label>${label || 'Repeats on'}</label>
+      <div class="weekday-row" id="${idPrefix}WeekdayRow">
+        ${WEEKDAY_BLOCKS.map(w => `<button type="button" class="weekday-block ${selectedDays.includes(w.day)?'selected':''}" data-day="${w.day}" data-prefix="${idPrefix}">${w.label}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+function wireWeekdayBlocks(idPrefix, draftRef){
+  const row = document.getElementById(`${idPrefix}WeekdayRow`);
+  if (!row) return;
+  row.querySelectorAll('.weekday-block').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const day = parseInt(btn.dataset.day, 10);
+      const i = draftRef.days.indexOf(day);
+      if (i === -1) draftRef.days.push(day); else draftRef.days.splice(i, 1);
+      btn.classList.toggle('selected');
+    });
+  });
+}
+function scheduleToDays(schedule){
+  if (schedule && Array.isArray(schedule.days)) return schedule.days.slice();
+  return [0,1,2,3,4,5,6]; // no schedule (or legacy schedule) defaults to shown as "every day"
+}
+function computeScheduleFromDays(days){
+  const sorted = [...new Set(days)].sort((a,b)=>a-b);
+  const isEveryDay = sorted.length === 7 && WEEKDAY_BLOCKS.every(w => sorted.includes(w.day));
+  if (isEveryDay) return null; // unrestricted — due every day
+  return { days: sorted };
+}
+
+function captureEditDraftFromInputs(){
+  if (!editDraft) return;
+  const titleInput = document.getElementById('editTitleInput');
+  const subInput = document.getElementById('editSubInput');
+  if (titleInput) editDraft.title = titleInput.value;
+  if (subInput) editDraft.sub = subInput.value;
+  const noteInput = document.getElementById('editNoteInput');
+  if (noteInput) editDraft.note = noteInput.value;
+  const rows = card.querySelectorAll('.link-edit-row');
+  const links = [];
+  rows.forEach((row, i)=>{
+    const label = row.querySelector('[data-k="label"]').value;
+    const url = row.querySelector('[data-k="url"]').value;
+    const existingDays = (editDraft.links[i] && editDraft.links[i].days) || [0,1,2,3,4,5,6];
+    links.push({ label, url, days: existingDays });
+  });
+  editDraft.links = links;
+}
+
+function renderLinkRowsHTML(links){
+  if (!links.length){
+    return '<p class="skill-note-empty" style="margin:4px 0 12px;">No links added — this window will just show its title, description, and skill note.</p>';
+  }
+  return links.map((l,i) => `
+    <div class="link-edit-group">
+      <div class="link-edit-row">
+        <div class="link-edit-fields">
+          <input type="text" class="edit-input" dir="auto" data-k="label" placeholder="Button label (e.g. Open Gmail)" value="${(l.label||'').replace(/"/g,'&quot;')}">
+          <input type="url" class="edit-input" dir="ltr" data-k="url" placeholder="https:// (optional)" value="${(l.url||'').replace(/"/g,'&quot;')}">
+        </div>
+        <button class="link-remove-btn" data-idx="${i}" aria-label="Remove link">✕</button>
+      </div>
+      <div class="link-schedule-row">
+        ${renderScheduleHTML(`link${i}`, l.days || [0,1,2,3,4,5,6], 'Shows on')}
+      </div>
+    </div>
+  `).join('');
+}
+// Wires the per-link weekday pickers rendered by renderLinkRowsHTML. `linksRef` must be
+// the live draft.links array so clicks mutate day selections in place immediately.
+function wireLinkScheduleBlocks(linksRef){
+  linksRef.forEach((l, i) => {
+    if (!l.days) l.days = [0,1,2,3,4,5,6];
+    wireWeekdayBlocks(`link${i}`, l);
+  });
+}
+
+function renderWindowEditor(s){
+  card.innerHTML = `
+    ${iconFor(s)}
+    <h1 style="font-size:24px;">Edit this window</h1>
+    <div class="edit-fields">
+      <div class="edit-field">
+        <label>Title</label>
+        <input type="text" class="edit-input" dir="auto" id="editTitleInput" value="${editDraft.title.replace(/"/g,'&quot;')}">
+      </div>
+      <div class="edit-field">
+        <label>Short description (optional)</label>
+        <input type="text" class="edit-input" dir="auto" id="editSubInput" value="${editDraft.sub.replace(/"/g,'&quot;')}">
+      </div>
+      ${renderScheduleHTML('edit', editDraft.days)}
+      <div class="edit-field">
+        <label>Skill I'm improving here (optional)</label>
+        <textarea class="skill-note-input" id="editNoteInput" rows="3" dir="auto" placeholder="e.g. Reading more fluently, staying informed without doomscrolling, tracking weight consistently...">${editDraft.note.replace(/</g,'&lt;')}</textarea>
+      </div>
+    </div>
+    <div class="edit-field" style="margin-bottom:10px;">
+      <label>Links (optional — add as many as you like)</label>
+    </div>
+    <div id="linkRowsWrap">${renderLinkRowsHTML(editDraft.links)}</div>
+    <button class="edit-link-btn" id="addLinkRowBtn" style="margin-bottom:16px;">+ Add another link</button>
+    <div class="actions">
+      <button class="btn btn-primary" id="saveWindowBtn">Save changes</button>
+      <button class="btn btn-secondary" id="cancelWindowBtn">Cancel</button>
+    </div>
+    <div class="save-msg" id="windowErrMsg"></div>
+  `;
+
+  document.getElementById('addLinkRowBtn').addEventListener('click', ()=>{
+    captureEditDraftFromInputs();
+    editDraft.links.push({ label:'', url:'', days:[0,1,2,3,4,5,6] });
+    render();
+  });
+  card.querySelectorAll('.link-remove-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      captureEditDraftFromInputs();
+      editDraft.links.splice(parseInt(btn.dataset.idx,10), 1);
+      render();
+    });
+  });
+  wireWeekdayBlocks('edit', editDraft);
+  wireLinkScheduleBlocks(editDraft.links);
+  document.getElementById('saveWindowBtn').addEventListener('click', async ()=>{
+    captureEditDraftFromInputs();
+    const title = editDraft.title.trim();
+    const err = document.getElementById('windowErrMsg');
+    if (!title){
+      err.style.color = '#FF6B57';
+      err.textContent = 'A title is needed.';
+      return;
+    }
+    const finalLinks = editDraft.links
+      .filter(l => (l.url||'').trim() || (l.label||'').trim())
+      .map((l,i) => ({
+        label: (l.label||'').trim() || 'Open App',
+        url: (l.url||'').trim(),
+        primary: i===0,
+        schedule: computeScheduleFromDays(l.days || [0,1,2,3,4,5,6])
+      }));
+    const schedule = computeScheduleFromDays(editDraft.days);
+    const noteVal = editDraft.note.trim();
+    if (noteVal) skillNotes[s.id] = noteVal; else delete skillNotes[s.id];
+    await saveSkillNotes();
+    const idx = STEPS.findIndex(x => x.id === s.id);
+    if (idx !== -1){
+      STEPS[idx] = { ...STEPS[idx], title, sub: editDraft.sub.trim(), links: finalLinks, schedule };
+      await saveSteps();
+    }
+    editingWindow = null;
+    editDraft = null;
+    render();
+  });
+  document.getElementById('cancelWindowBtn').addEventListener('click', ()=>{
+    editingWindow = null;
+    editDraft = null;
+    render();
+  });
+}
+function renderWindowEditorNav(){
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `
+    <button class="back-main" id="backToOverviewFromEditBtn">← Overview</button>
+  `;
+  card.appendChild(nav);
+  document.getElementById('backToOverviewFromEditBtn').addEventListener('click', ()=>{
+    editingWindow = null;
+    editDraft = null;
+    view = 'grid';
+    render();
+  });
+}
+
+function renderDetailNav(s){
+  const prog = stepProgress(s);
+  const label = prog.isFull
+    ? 'Completed ✓'
+    : (prog.hasLinks && prog.checked > 0 ? `Mark all complete (${prog.checked}/${prog.total}) ✓` : 'Mark complete ✓');
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `
+    <button id="backToGridBtn" class="back-main">← Overview</button>
+    <button id="completeBtn" class="next-main ${prog.isFull ? 'complete-done' : ''}">${label}</button>
+  `;
+  card.appendChild(nav);
+  document.getElementById('backToGridBtn').addEventListener('click', ()=>{
+    view = 'grid';
+    activeId = null;
+    removeConfirmStep = null;
+    editingWindow = null;
+    render();
+  });
+  document.getElementById('completeBtn').addEventListener('click', ()=> toggleComplete(s.id));
+}
+
+// ---------- grid (overview) ----------
+const RESIZE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l4 4M9 5L5 9M15 19l4-4M9 19l-4-4"/></svg>';
+function renderGrid(){
+  ensureToday();
+  const dueSteps = STEPS.filter(isDueToday);
+  const doneCount = dueSteps.filter(s => stepProgress(s).isFull).length;
+  card.innerHTML = `
+    <div class="grid-header">
+      <h1>Good morning.</h1>
+      <p class="sub">${dueSteps.length ? `${doneCount} of ${dueSteps.length} done today` : (STEPS.length ? "Nothing scheduled for today." : "No windows yet — add the first one below.")}</p>
+    </div>
+    <div class="win-grid" id="winGrid">
+      ${dueSteps.length ? '<div class="grid-divider"><span>Daily Skills</span></div>' : ''}
+      ${dueSteps.map((s, si) => {
+        const prog = stepProgress(s);
+        const pct = Math.round(prog.ratio * 100);
+        const badge = prog.isFull
+          ? CHECK_SVG_SM
+          : (prog.hasLinks && prog.checked > 0 ? `<span class="win-check-frac">${prog.checked}/${prog.total}</span>` : '');
+        const span = Math.max(1, s.widgetSpan || 1);
+        return `
+        <div class="win-card tone-${si % 5} ${prog.isFull ? 'win-done' : ''}" data-id="${s.id}" data-span="${span}" style="grid-column: span ${span};">
+          <div class="win-fill" style="height:${pct}%"></div>
+          <button class="win-check ${prog.isFull ? 'checked' : ''}" data-id="${s.id}" aria-label="${prog.isFull ? 'Mark incomplete' : 'Mark complete'}">${badge}</button>
+          <div class="win-icon">${iconFor(s)}</div>
+          <div class="win-title">${s.title}</div>
+          <button class="win-resize-handle" aria-label="Drag to resize">${RESIZE_ICON}</button>
+        </div>`;
+      }).join('')}
+      ${(dueSteps.length && todoLists.length) ? '<div class="grid-divider"><span>Tasks / Ideas</span></div>' : ''}
+      ${todoLists.map(list => {
+        const pendingCount = todos.filter(t => t.listId === list.id && !t.done).length;
+        const c = listColorOf(list);
+        const span = Math.max(1, list.widgetSpan || 1);
+        return `
+        <div class="win-card todo-tile" data-todo-id="${list.id}" data-span="${span}" style="grid-column: span ${span}; background: ${c};">
+          ${pendingCount ? `<div class="todo-count-badge" style="background:${c};">${pendingCount}</div>` : ''}
+          <div class="win-icon">${todoIconWithColor(c)}</div>
+          <div class="win-title">${list.title}</div>
+          <button class="win-resize-handle" aria-label="Drag to resize">${RESIZE_ICON}</button>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  card.querySelectorAll('.win-card[data-id]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if (justDraggedGrid) return;
+      view = 'detail'; activeId = el.dataset.id; render();
+    });
+  });
+  card.querySelectorAll('.win-check').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleComplete(btn.dataset.id); });
+  });
+  card.querySelectorAll('.todo-tile').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if (justDraggedGrid) return;
+      view = 'todo'; activeTodoListId = el.dataset.todoId; render();
+    });
+  });
+  setupGridReorder();
+  setupTileResize();
+}
+
+// ---------- inline tile resize (drag corner handle to widen 1x/2x/3x) ----------
+const MAX_TILE_SPAN = 3;
+function gridColumnCount(grid){
+  const styles = getComputedStyle(grid);
+  const cols = styles.gridTemplateColumns.split(' ').filter(Boolean).length;
+  return Math.max(1, cols);
+}
+function setupTileResize(){
+  const grid = card.querySelector('.win-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.win-resize-handle').forEach(handle=>{
+    handle.addEventListener('pointerdown', (e)=> beginTileResize(e, handle, grid));
+  });
+}
+function beginTileResize(e, handle, grid){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const el = handle.closest('.win-card');
+  if (!el) return;
+  const kind = el.hasAttribute('data-id') ? 'step' : 'todoList';
+  const id = kind === 'step' ? el.dataset.id : el.dataset.todoId;
+  const startSpan = parseInt(el.dataset.span, 10) || 1;
+  const startX = e.clientX;
+  const startWidth = el.getBoundingClientRect().width;
+  const gap = 10;
+  const tileUnit = (startWidth / startSpan) + gap;
+  const maxCols = gridColumnCount(grid);
+  const cap = Math.min(MAX_TILE_SPAN, maxCols);
+
+  el.classList.add('resizing');
+  if (navigator.vibrate) navigator.vibrate(8);
+
+  let currentSpan = startSpan;
+
+  function onMove(ev){
+    const dx = ev.clientX - startX;
+    const deltaSpan = Math.round(dx / tileUnit);
+    const newSpan = Math.min(cap, Math.max(1, startSpan + deltaSpan));
+    if (newSpan !== currentSpan){
+      currentSpan = newSpan;
+      el.style.gridColumn = `span ${currentSpan}`;
+      if (navigator.vibrate) navigator.vibrate(6);
+    }
+  }
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    el.classList.remove('resizing');
+    el.dataset.span = String(currentSpan);
+    justDraggedGrid = true;
+    setTimeout(()=>{ justDraggedGrid = false; }, 350);
+    finishTileResize(kind, id, currentSpan);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+async function finishTileResize(kind, id, span){
+  if (kind === 'step'){
+    const s = STEPS.find(x=> x.id === id);
+    if (s){ s.widgetSpan = span; await saveSteps(); }
+  } else {
+    const l = todoLists.find(x=> x.id === id);
+    if (l){ l.widgetSpan = span; await saveTodoLists(); }
+  }
+  render();
+}
+window.addEventListener('resize', ()=>{
+  if (view === 'grid') render();
+});
+
+// ---------- inline grid reorder (long-press + drag directly on the tiles) ----------
+let justDraggedGrid = false;
+function setupGridReorder(){
+  const grid = card.querySelector('.win-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.win-card').forEach(el=>{
+    el.addEventListener('pointerdown', (e)=> armGridDrag(e, el, grid));
+  });
+}
+function armGridDrag(e, el, grid){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  if (e.target.closest('.win-check')) return; // let the checkmark handle its own tap
+  if (e.target.closest('.win-resize-handle')) return; // let the resize handle drive its own drag
+  const startX = e.clientX, startY = e.clientY;
+  let moved = false;
+  let timer = null;
+
+  function cleanup(){
+    clearTimeout(timer);
+    document.removeEventListener('pointermove', onPreMove);
+    document.removeEventListener('pointerup', onPreUp);
+  }
+  function onPreMove(ev){
+    if (Math.hypot(ev.clientX - startX, ev.clientY - startY) > 8){
+      moved = true;
+      cleanup();
+    }
+  }
+  function onPreUp(){ cleanup(); }
+
+  document.addEventListener('pointermove', onPreMove);
+  document.addEventListener('pointerup', onPreUp, { once: true });
+
+  timer = setTimeout(()=>{
+    if (moved) return;
+    cleanup();
+    beginGridDrag(e, el, grid);
+  }, 380);
+}
+function beginGridDrag(e, el, grid){
+  e.preventDefault();
+  if (navigator.vibrate) navigator.vibrate(12);
+
+  const kindSelector = el.hasAttribute('data-id') ? '[data-id]' : '[data-todo-id]';
+  const startRect = el.getBoundingClientRect();
+  const grabX = e.clientX - startRect.left;
+  const grabY = e.clientY - startRect.top;
+
+  el.classList.add('grid-dragging');
+  el.style.zIndex = 50;
+  el.style.pointerEvents = 'none';
+
+  function naturalRect(){
+    const prevTransform = el.style.transform;
+    el.style.transform = 'none';
+    void el.offsetWidth;
+    const r = el.getBoundingClientRect();
+    el.style.transform = prevTransform;
+    return r;
+  }
+  function applyTransform(clientX, clientY){
+    const targetLeft = clientX - grabX;
+    const targetTop = clientY - grabY;
+    const nat = naturalRect();
+    el.style.transform = `translate(${targetLeft - nat.left}px, ${targetTop - nat.top}px)`;
+  }
+  applyTransform(e.clientX, e.clientY);
+
+  function onMove(ev){
+    applyTransform(ev.clientX, ev.clientY);
+    const siblings = Array.from(grid.querySelectorAll('.win-card' + kindSelector)).filter(c=> c !== el);
+    let targetCard = null;
+    for (const c of siblings){
+      const r = c.getBoundingClientRect();
+      if (ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom){
+        targetCard = c;
+        break;
+      }
+    }
+    if (targetCard){
+      const allCards = Array.from(grid.querySelectorAll('.win-card'));
+      const elIdx = allCards.indexOf(el);
+      const targetIdx = allCards.indexOf(targetCard);
+      if (elIdx < targetIdx) targetCard.after(el); else targetCard.before(el);
+    }
+  }
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    el.classList.remove('grid-dragging');
+    el.style.transform = '';
+    el.style.zIndex = '';
+    el.style.pointerEvents = '';
+    justDraggedGrid = true;
+    setTimeout(()=>{ justDraggedGrid = false; }, 350);
+    finishGridDrag(grid, kindSelector);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+async function finishGridDrag(grid, kindSelector){
+  const items = Array.from(grid.querySelectorAll('.win-card' + kindSelector));
+  if (kindSelector === '[data-id]'){
+    const newOrderIds = items.map(el=> el.dataset.id);
+    const idToObj = {};
+    newOrderIds.forEach(id=>{ idToObj[id] = STEPS.find(s=> s.id === id); });
+    const slots = newOrderIds.map(id => STEPS.findIndex(s=> s.id === id)).sort((a,b)=> a-b);
+    newOrderIds.forEach((id, i)=>{ STEPS[slots[i]] = idToObj[id]; });
+    await saveSteps();
+  } else {
+    const newOrderIds = items.map(el=> el.dataset.todoId);
+    todoLists.sort((a,b)=> newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+    await saveTodoLists();
+  }
+  render();
+}
+
+// ---------- manage / reorder ----------
+function renderManageScreen(){
+  card.innerHTML = `
+    <h1 style="font-size:26px;">Reorder windows</h1>
+    <p class="sub">Drag the handle to reorder, remove one, or tap a title to open and edit it — even skills not scheduled for today.</p>
+    ${todoLists.length ? '<div class="grid-divider" style="margin:4px 0 10px;"><span>Daily Skills</span></div>' : ''}
+    <div class="manage-list" id="manageList">
+      ${STEPS.map((s,i) => `
+        <div class="manage-item" data-id="${s.id}">
+          <button class="manage-drag" data-id="${s.id}" aria-label="Drag to reorder">⠿</button>
+          <div class="manage-item-title manage-item-title-link" data-id="${s.id}">${i+1}. ${s.title}${!isDueToday(s) ? '<span class="manage-off-badge">Off today</span>' : ''}</div>
+          <div class="manage-item-actions">
+            <button class="manage-remove" data-id="${s.id}" aria-label="Remove ${s.title}">✕</button>
+          </div>
+        </div>
+      `).join('') || '<p class="skill-note-empty">No windows yet.</p>'}
+    </div>
+    ${todoLists.length ? `
+    <div class="grid-divider" style="margin:18px 0 10px;"><span>Tasks / Ideas</span></div>
+    <div class="manage-list" id="manageTodoListsList">
+      ${todoLists.map((l,i) => `
+        <div class="manage-item" data-id="${l.id}">
+          <button class="manage-drag" data-id="${l.id}" aria-label="Drag to reorder">⠿</button>
+          <div class="manage-item-title manage-item-title-link" data-todo-id="${l.id}">${i+1}. ${l.title}</div>
+        </div>
+      `).join('')}
+    </div>` : ''}
+  `;
+  card.querySelectorAll('.manage-item-title-link[data-id]').forEach(el=>{
+    el.addEventListener('click', ()=>{ view = 'detail'; activeId = el.dataset.id; render(); });
+  });
+  card.querySelectorAll('.manage-item-title-link[data-todo-id]').forEach(el=>{
+    el.addEventListener('click', ()=>{ view = 'todo'; activeTodoListId = el.dataset.todoId; render(); });
+  });
+  card.querySelectorAll('.manage-remove').forEach(b=>{
+    b.addEventListener('click', (e)=>{ e.stopPropagation(); removeStep(b.dataset.id); });
+  });
+  setupStepDragReorder();
+  setupTodoListManageDragReorder();
+}
+function setupStepDragReorder(){
+  const listEl = document.getElementById('manageList');
+  if (!listEl) return;
+  listEl.querySelectorAll('.manage-drag').forEach(handle=>{
+    handle.addEventListener('pointerdown', (e)=> beginStepDrag(e, listEl));
+  });
+}
+function beginStepDrag(e, listEl){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const row = e.target.closest('.manage-item');
+  if (!row) return;
+  e.preventDefault();
+
+  const rows = Array.from(listEl.children).filter(el=> el.classList.contains('manage-item'));
+  if (rows.length < 2) return;
+  const listRect = listEl.getBoundingClientRect();
+  const rects = rows.map(r=> r.getBoundingClientRect());
+  const GAP = 10;
+
+  listEl.style.height = listRect.height + 'px';
+  rows.forEach((r,i)=>{
+    r.style.position = 'absolute';
+    r.style.left = '0';
+    r.style.right = '0';
+    r.style.top = (rects[i].top - listRect.top) + 'px';
+    r.style.transition = 'top 0.18s ease';
+    r.style.width = '100%';
+  });
+  listEl.style.position = 'relative';
+
+  const startIndex = rows.indexOf(row);
+  row.style.transition = 'none';
+  row.style.zIndex = 5;
+  row.classList.add('dragging');
+
+  let order = rows.map(r=> r.dataset.id);
+  const heightOf = id => rects[rows.findIndex(r=> r.dataset.id === id)].height;
+  const startY = e.clientY;
+  const rowStartTop = rects[startIndex].top - listRect.top;
+
+  function topsFromOrder(){
+    const tops = {};
+    let c = 0;
+    order.forEach(id=>{ tops[id] = c; c += heightOf(id) + GAP; });
+    return tops;
+  }
+
+  function onMove(ev){
+    const dy = ev.clientY - startY;
+    const newTop = rowStartTop + dy;
+    row.style.top = newTop + 'px';
+    const rowCenter = newTop + rects[startIndex].height / 2;
+
+    const fromIdx = order.indexOf(row.dataset.id);
+    const tops = topsFromOrder();
+    let targetIdx = fromIdx;
+    for (let i = 0; i < order.length; i++){
+      if (order[i] === row.dataset.id) continue;
+      const mid = tops[order[i]] + heightOf(order[i]) / 2;
+      if (i < fromIdx && rowCenter < mid){ targetIdx = i; break; }
+      if (i > fromIdx && rowCenter > mid){ targetIdx = i; }
+    }
+    if (targetIdx !== fromIdx){
+      order.splice(fromIdx, 1);
+      order.splice(targetIdx, 0, row.dataset.id);
+      const newTops = topsFromOrder();
+      order.forEach(id=>{
+        if (id === row.dataset.id) return;
+        const r = rows.find(rr=> rr.dataset.id === id);
+        r.style.top = newTops[id] + 'px';
+      });
+    }
+  }
+
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    row.classList.remove('dragging');
+    row.style.zIndex = '';
+    const tops = topsFromOrder();
+    row.style.transition = 'top 0.18s ease';
+    row.style.top = tops[row.dataset.id] + 'px';
+    setTimeout(async ()=>{
+      STEPS.sort((a,b)=> order.indexOf(a.id) - order.indexOf(b.id));
+      await saveSteps();
+      renderManageScreen();
+      renderManageNav();
+    }, 180);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+function setupTodoListManageDragReorder(){
+  const listEl = document.getElementById('manageTodoListsList');
+  if (!listEl) return;
+  listEl.querySelectorAll('.manage-drag').forEach(handle=>{
+    handle.addEventListener('pointerdown', (e)=> beginTodoListManageDrag(e, listEl));
+  });
+}
+function beginTodoListManageDrag(e, listEl){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const row = e.target.closest('.manage-item');
+  if (!row) return;
+  e.preventDefault();
+
+  const rows = Array.from(listEl.children).filter(el=> el.classList.contains('manage-item'));
+  if (rows.length < 2) return;
+  const listRect = listEl.getBoundingClientRect();
+  const rects = rows.map(r=> r.getBoundingClientRect());
+  const GAP = 10;
+
+  listEl.style.height = listRect.height + 'px';
+  rows.forEach((r,i)=>{
+    r.style.position = 'absolute';
+    r.style.left = '0';
+    r.style.right = '0';
+    r.style.top = (rects[i].top - listRect.top) + 'px';
+    r.style.transition = 'top 0.18s ease';
+    r.style.width = '100%';
+  });
+  listEl.style.position = 'relative';
+
+  const startIndex = rows.indexOf(row);
+  row.style.transition = 'none';
+  row.style.zIndex = 5;
+  row.classList.add('dragging');
+
+  let order = rows.map(r=> r.dataset.id);
+  const heightOf = id => rects[rows.findIndex(r=> r.dataset.id === id)].height;
+  const startY = e.clientY;
+  const rowStartTop = rects[startIndex].top - listRect.top;
+
+  function topsFromOrder(){
+    const tops = {};
+    let c = 0;
+    order.forEach(id=>{ tops[id] = c; c += heightOf(id) + GAP; });
+    return tops;
+  }
+
+  function onMove(ev){
+    const dy = ev.clientY - startY;
+    const newTop = rowStartTop + dy;
+    row.style.top = newTop + 'px';
+    const rowCenter = newTop + rects[startIndex].height / 2;
+
+    const fromIdx = order.indexOf(row.dataset.id);
+    const tops = topsFromOrder();
+    let targetIdx = fromIdx;
+    for (let i = 0; i < order.length; i++){
+      if (order[i] === row.dataset.id) continue;
+      const mid = tops[order[i]] + heightOf(order[i]) / 2;
+      if (i < fromIdx && rowCenter < mid){ targetIdx = i; break; }
+      if (i > fromIdx && rowCenter > mid){ targetIdx = i; }
+    }
+    if (targetIdx !== fromIdx){
+      order.splice(fromIdx, 1);
+      order.splice(targetIdx, 0, row.dataset.id);
+      const newTops = topsFromOrder();
+      order.forEach(id=>{
+        if (id === row.dataset.id) return;
+        const r = rows.find(rr=> rr.dataset.id === id);
+        r.style.top = newTops[id] + 'px';
+      });
+    }
+  }
+
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    row.classList.remove('dragging');
+    row.style.zIndex = '';
+    const tops = topsFromOrder();
+    row.style.transition = 'top 0.18s ease';
+    row.style.top = tops[row.dataset.id] + 'px';
+    setTimeout(async ()=>{
+      todoLists.sort((a,b)=> order.indexOf(a.id) - order.indexOf(b.id));
+      await saveTodoLists();
+      renderManageScreen();
+      renderManageNav();
+    }, 180);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+function renderManageNav(){
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `
+    <button class="back-main" disabled>← Back</button>
+    <button id="doneManageBtn" class="next-main">Done →</button>
+  `;
+  card.appendChild(nav);
+  document.getElementById('doneManageBtn').addEventListener('click', ()=>{ view = 'grid'; render(); });
+}
+
+// ---------- add window form ----------
+function captureAddDraftFromInputs(){
+  if (!addDraft) return;
+  const titleInput = document.getElementById('newTitleInput');
+  const subInput = document.getElementById('newSubInput');
+  if (titleInput) addDraft.title = titleInput.value;
+  if (subInput) addDraft.sub = subInput.value;
+  const rows = card.querySelectorAll('.link-edit-row');
+  const links = [];
+  rows.forEach((row, i)=>{
+    const label = row.querySelector('[data-k="label"]').value;
+    const url = row.querySelector('[data-k="url"]').value;
+    const existingDays = (addDraft.links[i] && addDraft.links[i].days) || [0,1,2,3,4,5,6];
+    links.push({ label, url, days: existingDays });
+  });
+  addDraft.links = links;
+}
+function renderAddForm(){
+  if (!addDraft) addDraft = { title:'', sub:'', links:[{label:'', url:'', days:[0,1,2,3,4,5,6]}], days:[1,2,3,4,5,6] };
+  card.innerHTML = `
+    <h1 style="font-size:26px;">Add a skill</h1>
+    <div class="edit-fields">
+      <div class="edit-field">
+        <label>Title</label>
+        <input type="text" class="edit-input" dir="auto" id="newTitleInput" placeholder="e.g. LinkedIn" value="${addDraft.title.replace(/"/g,'&quot;')}">
+      </div>
+      <div class="edit-field">
+        <label>Short description (optional)</label>
+        <input type="text" class="edit-input" dir="auto" id="newSubInput" placeholder="e.g. Check messages and notifications" value="${addDraft.sub.replace(/"/g,'&quot;')}">
+      </div>
+      ${renderScheduleHTML('new', addDraft.days)}
+    </div>
+    <div class="edit-field" style="margin-bottom:10px;">
+      <label>Links (optional — add as many as you like)</label>
+    </div>
+    <div id="linkRowsWrap">${renderLinkRowsHTML(addDraft.links)}</div>
+    <button class="edit-link-btn" id="addLinkRowBtn" style="margin-bottom:16px;">+ Add another link</button>
+    <div class="actions">
+      <button class="btn btn-primary" id="confirmAddBtn">Add window</button>
+      <button class="btn btn-secondary" id="cancelAddBtn">Cancel</button>
+    </div>
+    <div class="save-msg" id="addErrMsg"></div>
+  `;
+  document.getElementById('addLinkRowBtn').addEventListener('click', ()=>{
+    captureAddDraftFromInputs();
+    addDraft.links.push({ label:'', url:'', days:[0,1,2,3,4,5,6] });
+    render();
+  });
+  card.querySelectorAll('.link-remove-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      captureAddDraftFromInputs();
+      addDraft.links.splice(parseInt(btn.dataset.idx,10), 1);
+      render();
+    });
+  });
+  wireWeekdayBlocks('new', addDraft);
+  wireLinkScheduleBlocks(addDraft.links);
+  document.getElementById('confirmAddBtn').addEventListener('click', async ()=>{
+    captureAddDraftFromInputs();
+    const title = addDraft.title.trim();
+    const err = document.getElementById('addErrMsg');
+    if (!title){
+      err.style.color = '#FF6B57';
+      err.textContent = 'A title is needed.';
+      return;
+    }
+    const finalLinks = addDraft.links
+      .filter(l => (l.url||'').trim() || (l.label||'').trim())
+      .map((l,i) => ({
+        label: (l.label||'').trim() || 'Open App',
+        url: (l.url||'').trim(),
+        primary: i===0,
+        schedule: computeScheduleFromDays(l.days || [0,1,2,3,4,5,6])
+      }));
+    const schedule = computeScheduleFromDays(addDraft.days);
+    const newStep = { id: slugify(title), iconKey: 'custom', title, sub: addDraft.sub.trim(), links: finalLinks, schedule };
+    STEPS.push(newStep);
+    await saveSteps();
+    addDraft = null;
+    view = 'grid';
+    render();
+  });
+  document.getElementById('cancelAddBtn').addEventListener('click', ()=>{
+    addDraft = null;
+    view = 'grid';
+    render();
+  });
+}
+
+// ---------- progress page ----------
+// A window's completion ratio for one specific day (used for the day-trail dots).
+// Uses granular per-link history when available; falls back to the whole-window
+// boolean record for days recorded before per-task tracking existed.
+function windowDayRatio(s, k){
+  const links = s.links || [];
+  if (!links.length){
+    return (history[k] && history[k][s.id]) ? 1 : 0;
+  }
+  const dueIdxs = [];
+  links.forEach((l,i)=>{ if (isLinkScheduledOnDate(l, k)) dueIdxs.push(i); });
+  if (!dueIdxs.length) return 0;
+  const rec = linkHistory[k] && linkHistory[k][s.id];
+  if (rec){
+    let checked = 0;
+    dueIdxs.forEach(i => { if (rec[i]) checked++; });
+    return checked / dueIdxs.length;
+  }
+  return (history[k] && history[k][s.id]) ? 1 : 0;
+}
+
+const TRAIL_LEN = 10; // how many recent scheduled days to show in the consistency trail
+
+function computeStats(days){
+  const keys = [];
+  const base = new Date();
+  for (let i = 0; i < days; i++){
+    const d = new Date(base);
+    d.setDate(d.getDate() - i);
+    keys.push(localDateKey(d));
+  }
+  const todayK = todayKey();
+  return STEPS.map(s => {
+    // Only count days the window itself was actually scheduled to appear.
+    const availableKeys = keys.filter(k => isWindowScheduledOnDate(s, k));
+    const count = availableKeys.filter(k => history[k] && history[k][s.id]).length;
+    const total = availableKeys.length;
+
+    // Recent day-by-day trail, oldest to newest, capped so it stays compact.
+    const trailKeys = availableKeys.slice(0, TRAIL_LEN).reverse();
+    const trail = trailKeys.map(k => ({ ratio: windowDayRatio(s, k), isToday: k === todayK }));
+
+    // Per-task breakdown: each link's own denominator is the days IT was
+    // scheduled (its own days AND the window's days), not the full period.
+    const links = (s.links || []).map((l, idx) => {
+      const linkAvailableKeys = availableKeys.filter(k => isLinkScheduledOnDate(l, k));
+      let checked = 0;
+      linkAvailableKeys.forEach(k => {
+        const rec = linkHistory[k] && linkHistory[k][s.id];
+        if (rec && Object.prototype.hasOwnProperty.call(rec, idx)){
+          if (rec[idx]) checked++;
+        } else if (history[k] && history[k][s.id]){
+          // No granular record for this day (before per-task tracking existed) —
+          // fall back to the window's own record: a fully-done window counts
+          // every task as done that day.
+          checked++;
+        }
+      });
+      return { label: l.label || 'Untitled', checked, total: linkAvailableKeys.length };
+    });
+
+    return { id: s.id, title: s.title, iconKey: s.iconKey, count, total, trail, links };
+  });
+}
+
+// Builds an SVG progress ring: a faint full circle plus a gradient arc for the
+// completed fraction, with the percentage set as the center text.
+function ringSVG(pct, gradId){
+  const size = 58, stroke = 6;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c * (1 - pct / 100);
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="progress-ring">
+      <defs>
+        <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="var(--dawn)"/>
+          <stop offset="100%" stop-color="var(--sage)"/>
+        </linearGradient>
+      </defs>
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--border-soft)" stroke-width="${stroke}"/>
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#${gradId})" stroke-width="${stroke}"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+        transform="rotate(-90 ${size/2} ${size/2})"/>
+      <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" class="progress-ring-label">${pct}%</text>
+    </svg>
+  `;
+}
+
+// A row of small blocks (same visual language as the weekday picker) showing
+// how the last several scheduled days actually went — done, partial, or missed.
+function trailHTML(trail){
+  if (!trail.length) return '<p class="progress-trail-empty">Nothing scheduled yet.</p>';
+  return `<div class="progress-trail">
+    ${trail.map(t => {
+      let cls = 'progress-dot-missed';
+      if (t.ratio >= 1) cls = 'progress-dot-done';
+      else if (t.ratio > 0) cls = 'progress-dot-partial';
+      return `<span class="progress-dot ${cls} ${t.isToday ? 'progress-dot-today' : ''}"></span>`;
+    }).join('')}
+  </div>`;
+}
+
+const TASK_ACCENTS = ['var(--dawn)', 'var(--sage)', 'var(--gold)', 'var(--violet)', 'var(--sunflower)'];
+
+function renderProgress(){
+  const days = progressPeriod === 'week' ? 7 : progressPeriod === 'month' ? 30 : 365;
+  const stats = computeStats(days);
+  card.innerHTML = `
+    ${ICONS.chart}
+    <h1 style="font-size:26px;">Progress</h1>
+    <p class="sub">How consistently you're hitting each window, and each task inside it.</p>
+    <div class="period-tabs">
+      <button class="period-tab ${progressPeriod==='week'?'active':''}" data-p="week">Week</button>
+      <button class="period-tab ${progressPeriod==='month'?'active':''}" data-p="month">Month</button>
+      <button class="period-tab ${progressPeriod==='year'?'active':''}" data-p="year">Year</button>
+    </div>
+    <div class="progress-list">
+      ${stats.map((st, si) => {
+        const pct = st.total ? Math.round((st.count/st.total)*100) : 0;
+        const gradId = `progRing-${si}`;
+        return `
+        <div class="progress-card">
+          <div class="progress-card-top">
+            <div class="progress-card-heading">
+              <span class="progress-card-icon">${(ICONS[st.iconKey] || ICONS.custom)}</span>
+              <div>
+                <div class="progress-card-title">${st.title}</div>
+                <div class="progress-card-count">${st.count} of ${st.total} scheduled days</div>
+              </div>
+            </div>
+            ${ringSVG(pct, gradId)}
+          </div>
+          ${trailHTML(st.trail)}
+          ${st.links.length ? `<div class="progress-sublist">
+            ${st.links.map((l, li) => {
+              const lpct = l.total ? Math.round((l.checked/l.total)*100) : 0;
+              const accent = TASK_ACCENTS[li % TASK_ACCENTS.length];
+              return `
+              <div class="progress-subitem">
+                <span class="progress-subitem-dot" style="background:${accent};"></span>
+                <span class="progress-subitem-title">${l.label}</span>
+                <div class="progress-bar-track thin"><div class="progress-bar-fill" style="width:${lpct}%; background:${accent};"></div></div>
+                <span class="progress-subitem-count">${l.checked}/${l.total}</span>
+              </div>`;
+            }).join('')}
+          </div>` : ''}
+        </div>`;
+      }).join('') || '<p class="skill-note-empty">No windows yet.</p>'}
+    </div>
+  `;
+  card.querySelectorAll('.period-tab').forEach(b=>{
+    b.addEventListener('click', ()=>{ progressPeriod = b.dataset.p; render(); });
+  });
+}
+function renderProgressNav(){
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `
+    <button class="back-main" disabled>← Back</button>
+    <button id="doneProgressBtn" class="next-main">Done →</button>
+  `;
+  card.appendChild(nav);
+  document.getElementById('doneProgressBtn').addEventListener('click', ()=>{ view = 'grid'; render(); });
+}
+
+// ---------- to-do list (separate from habit windows — no schedule, no reset) ----------
+function setupTodoDragReorder(){
+  card.querySelectorAll('.todo-list').forEach(listEl=>{
+    listEl.querySelectorAll('.todo-drag').forEach(handle=>{
+      handle.addEventListener('pointerdown', (e)=> beginTodoDrag(e, listEl));
+    });
+  });
+}
+function beginTodoDrag(e, listEl){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const row = e.target.closest('.todo-row');
+  if (!row) return;
+  e.preventDefault();
+
+  const rows = Array.from(listEl.children).filter(el=> el.classList.contains('todo-row'));
+  if (rows.length < 2) return;
+  const listRect = listEl.getBoundingClientRect();
+  const rects = rows.map(r=> r.getBoundingClientRect());
+  const GAP = 10;
+
+  listEl.style.height = listRect.height + 'px';
+  rows.forEach((r,i)=>{
+    r.style.position = 'absolute';
+    r.style.left = '0';
+    r.style.right = '0';
+    r.style.top = (rects[i].top - listRect.top) + 'px';
+    r.style.transition = 'top 0.18s ease';
+    r.style.width = '100%';
+  });
+  listEl.style.position = 'relative';
+
+  const startIndex = rows.indexOf(row);
+  row.style.transition = 'none';
+  row.style.zIndex = 5;
+  row.classList.add('dragging');
+
+  let order = rows.map(r=> r.dataset.id);
+  const heightOf = id => rects[rows.findIndex(r=> r.dataset.id === id)].height;
+  const startY = e.clientY;
+  const rowStartTop = rects[startIndex].top - listRect.top;
+
+  function topsFromOrder(){
+    const tops = {};
+    let c = 0;
+    order.forEach(id=>{ tops[id] = c; c += heightOf(id) + GAP; });
+    return tops;
+  }
+
+  function onMove(ev){
+    const dy = ev.clientY - startY;
+    const newTop = rowStartTop + dy;
+    row.style.top = newTop + 'px';
+    const rowCenter = newTop + rects[startIndex].height / 2;
+
+    const fromIdx = order.indexOf(row.dataset.id);
+    const tops = topsFromOrder();
+    let targetIdx = fromIdx;
+    for (let i = 0; i < order.length; i++){
+      if (order[i] === row.dataset.id) continue;
+      const mid = tops[order[i]] + heightOf(order[i]) / 2;
+      if (i < fromIdx && rowCenter < mid){ targetIdx = i; break; }
+      if (i > fromIdx && rowCenter > mid){ targetIdx = i; }
+    }
+    if (targetIdx !== fromIdx){
+      order.splice(fromIdx, 1);
+      order.splice(targetIdx, 0, row.dataset.id);
+      const newTops = topsFromOrder();
+      order.forEach(id=>{
+        if (id === row.dataset.id) return;
+        const r = rows.find(rr=> rr.dataset.id === id);
+        r.style.top = newTops[id] + 'px';
+      });
+    }
+  }
+
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    row.classList.remove('dragging');
+    row.style.zIndex = '';
+    const tops = topsFromOrder();
+    row.style.transition = 'top 0.18s ease';
+    row.style.top = tops[row.dataset.id] + 'px';
+    setTimeout(async ()=>{
+      await reorderTodos(activeTodoListId, order);
+      renderTodoScreen();
+    }, 180);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp, { once: true });
+}
+function renderTodoRow(t){
+  return `
+    <div class="todo-row ${t.done?'todo-row-done':''}" data-id="${t.id}">
+      <button class="todo-drag" data-id="${t.id}" aria-label="Drag to reorder">⠿</button>
+      <div class="todo-pill" style="background: color-mix(in srgb, ${t.color} 78%, #F3F2EE);" dir="auto">${(t.text||'').replace(/</g,'&lt;')}</div>
+      <button class="todo-check ${t.done?'checked':''}" data-id="${t.id}" aria-label="${t.done?'Mark not done':'Mark done'}">${t.done?CHECK_SVG_SM:''}</button>
+      <button class="todo-delete" data-id="${t.id}" aria-label="Delete task">✕</button>
+    </div>
+  `;
+}
+function renderTodoScreen(){
+  const list = todoLists.find(l => l.id === activeTodoListId);
+  if (!list){ view = 'grid'; activeTodoListId = null; return; }
+  if (!todoSelectedColor) todoSelectedColor = TODO_COLORS[0].hex;
+  const listTodos = todos.filter(t => t.listId === activeTodoListId)
+    .sort((a,b)=> (a.order ?? 0) - (b.order ?? 0));
+  const pending = listTodos.filter(t => !t.done);
+  const done = listTodos.filter(t => t.done);
+
+  if (editingTodoListTitle === list.id){
+    if (!todoListColorDraft) todoListColorDraft = listColorOf(list);
+    card.innerHTML = `
+      ${ICONS.todo}
+      <h1 style="font-size:22px;">Edit this list</h1>
+      <div class="edit-fields">
+        <div class="edit-field">
+          <label>Title</label>
+          <input type="text" class="edit-input" dir="auto" id="todoListTitleInput" value="${list.title.replace(/"/g,'&quot;')}">
+        </div>
+        <div class="edit-field" style="margin-bottom:16px;">
+          <label>Color</label>
+          <div class="todo-color-row" id="todoListColorRow">
+            ${LIST_COLORS.map(c => `<button class="todo-swatch ${c.hex===todoListColorDraft?'selected':''}" data-color="${c.hex}" style="background:${c.hex}" aria-label="${c.key}"></button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="saveTodoListTitleBtn">Save</button>
+        <button class="btn btn-secondary" id="cancelTodoListTitleBtn">Cancel</button>
+      </div>
+    `;
+    document.getElementById('todoListColorRow').querySelectorAll('.todo-swatch').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        todoListColorDraft = btn.dataset.color;
+        card.querySelectorAll('#todoListColorRow .todo-swatch').forEach(b=> b.classList.toggle('selected', b.dataset.color === todoListColorDraft));
+      });
+    });
+    document.getElementById('saveTodoListTitleBtn').addEventListener('click', ()=>{
+      const val = document.getElementById('todoListTitleInput').value;
+      const color = todoListColorDraft;
+      todoListColorDraft = null;
+      renameTodoList(list.id, val, color);
+    });
+    document.getElementById('cancelTodoListTitleBtn').addEventListener('click', ()=>{
+      editingTodoListTitle = null;
+      todoListColorDraft = null;
+      render();
+    });
+    return;
+  }
+
+  card.innerHTML = `
+    ${ICONS.todo}
+    <h1 style="font-size:26px;">${list.title.replace(/</g,'&lt;')}</h1>
+    <p class="sub">Random one-off tasks — not tied to any schedule.</p>
+    ${!listTodos.length ? '<p class="skill-note-empty">No tasks yet.</p>' : ''}
+    ${pending.length ? `<div class="todo-list">${pending.map(renderTodoRow).join('')}</div>` : ''}
+    ${done.length ? `<div class="todo-section-label">Completed</div><div class="todo-list">${done.map(renderTodoRow).join('')}</div>` : ''}
+    <div class="edit-field" style="margin-top:6px;">
+      <input type="text" class="edit-input" dir="auto" id="todoTextInput" placeholder="Add a task...">
+    </div>
+    <div class="todo-color-row">
+      ${TODO_COLORS.map(c => `<button class="todo-swatch ${c.hex===todoSelectedColor?'selected':''}" data-color="${c.hex}" style="background:${c.hex}" aria-label="${c.key}"></button>`).join('')}
+    </div>
+    <button class="btn btn-primary" id="addTodoBtn">+ Add task</button>
+  `;
+  card.querySelectorAll('.todo-swatch').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      todoSelectedColor = btn.dataset.color;
+      card.querySelectorAll('.todo-swatch').forEach(b=> b.classList.toggle('selected', b.dataset.color === todoSelectedColor));
+    });
+  });
+  wireTodoScreen();
+}
+function wireTodoScreen(){
+  const addBtn = document.getElementById('addTodoBtn');
+  if (addBtn) addBtn.addEventListener('click', async ()=>{
+    const input = document.getElementById('todoTextInput');
+    const text = input.value.trim();
+    if (!text) return;
+    await addTodo(text, todoSelectedColor, activeTodoListId);
+  });
+  card.querySelectorAll('.todo-check').forEach(btn=>{
+    btn.addEventListener('click', ()=> toggleTodoDone(btn.dataset.id));
+  });
+  setupTodoDragReorder();
+  card.querySelectorAll('.todo-delete').forEach(btn=>{
+    btn.addEventListener('click', ()=> deleteTodo(btn.dataset.id));
+  });
+}
+function renderTodoNav(){
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `
+    <button class="back-main" disabled>← Back</button>
+    <button id="doneTodoBtn" class="next-main">Done →</button>
+  `;
+  card.appendChild(nav);
+  document.getElementById('doneTodoBtn').addEventListener('click', ()=>{
+    view = 'grid';
+    activeTodoListId = null;
+    editingTodoListTitle = null;
+    removeConfirmTodoList = null;
+    render();
+  });
+}
+function renderAddTodoListForm(){
+  card.innerHTML = `
+    ${ICONS.todo}
+    <h1 style="font-size:26px;">Add a to-do-list</h1>
+    <p class="sub">Give it a name — e.g. "Work," "Home," "Errands."</p>
+    <div class="edit-fields">
+      <div class="edit-field">
+        <label>Title</label>
+        <input type="text" class="edit-input" dir="auto" id="newTodoListTitle" placeholder="e.g. Groceries">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="confirmAddTodoListBtn">Add to-do-list</button>
+      <button class="btn btn-secondary" id="cancelAddTodoListBtn">Cancel</button>
+    </div>
+    <div class="save-msg" id="todoListErrMsg"></div>
+  `;
+  document.getElementById('confirmAddTodoListBtn').addEventListener('click', async ()=>{
+    const title = document.getElementById('newTodoListTitle').value.trim();
+    const err = document.getElementById('todoListErrMsg');
+    if (!title){
+      err.style.color = '#FF6B57';
+      err.textContent = 'A title is needed.';
+      return;
+    }
+    await addTodoList(title);
+  });
+  document.getElementById('cancelAddTodoListBtn').addEventListener('click', ()=>{ view = 'grid'; render(); });
+}
+
+// ---------- outer toolbar ----------
+function renderOuterActions(){
+  outerActions.innerHTML = '';
+
+  if (view === 'grid'){
+    outerActions.innerHTML = `
+      <button class="outer-btn" id="addWindowOuterBtn">+ Add a skill</button>
+      <button class="outer-btn" id="addTodoListOuterBtn">+ Add a to-do-list</button>
+      <button class="outer-btn" id="reorderOuterBtn">⇅ Reorder windows</button>
+      <button class="outer-btn" id="progressOuterBtn">📈 Progress</button>
+      <button class="outer-btn" id="backupOuterBtn">⬇ Backup</button>
+      <button class="outer-btn" id="restoreOuterBtn">⬆ Restore</button>
+      <input type="file" id="restoreFileInput" accept="application/json" style="display:none">
+    `;
+    document.getElementById('addWindowOuterBtn').addEventListener('click', ()=>{ addDraft = null; view = 'add'; render(); });
+    document.getElementById('addTodoListOuterBtn').addEventListener('click', ()=>{ view = 'addTodoList'; render(); });
+    document.getElementById('reorderOuterBtn').addEventListener('click', ()=>{ view = 'manage'; render(); });
+    document.getElementById('progressOuterBtn').addEventListener('click', ()=>{ view = 'progress'; render(); });
+    document.getElementById('backupOuterBtn').addEventListener('click', exportBackup);
+    document.getElementById('restoreOuterBtn').addEventListener('click', ()=>{
+      document.getElementById('restoreFileInput').click();
+    });
+    document.getElementById('restoreFileInput').addEventListener('change', async (e)=>{
+      const file = e.target.files[0];
+      if (file) await importBackup(file);
+    });
+    return;
+  }
+
+  if (view === 'todo'){
+    const list = todoLists.find(l => l.id === activeTodoListId);
+    if (!list || editingTodoListTitle === list.id) return;
+    if (removeConfirmTodoList === list.id){
+      outerActions.innerHTML = `
+        <div class="outer-confirm">
+          <span>Remove this to-do-list and its tasks?</span>
+          <button class="outer-btn danger" id="confirmRemoveTodoListBtn">Yes, remove</button>
+          <button class="outer-btn" id="cancelRemoveTodoListBtn">Cancel</button>
+        </div>
+      `;
+      document.getElementById('confirmRemoveTodoListBtn').addEventListener('click', ()=> removeTodoList(list.id));
+      document.getElementById('cancelRemoveTodoListBtn').addEventListener('click', ()=>{ removeConfirmTodoList = null; render(); });
+      return;
+    }
+    outerActions.innerHTML = `
+      <button class="outer-btn" id="editTodoListTitleBtn">✎ Edit list title & color</button>
+      <button class="outer-btn danger" id="removeTodoListBtn">✕ Remove this list</button>
+    `;
+    document.getElementById('editTodoListTitleBtn').addEventListener('click', ()=>{ editingTodoListTitle = list.id; todoListColorDraft = listColorOf(list); render(); });
+    document.getElementById('removeTodoListBtn').addEventListener('click', ()=>{ removeConfirmTodoList = list.id; render(); });
+    return;
+  }
+
+  if (view !== 'detail') return;
+  const s = STEPS.find(x => x.id === activeId);
+  if (!s || editingWindow === s.id) return;
+
+  if (removeConfirmStep === s.id){
+    outerActions.innerHTML = `
+      <div class="outer-confirm">
+        <span>Remove this window?</span>
+        <button class="outer-btn danger" id="confirmRemoveBtn">Yes, remove</button>
+        <button class="outer-btn" id="cancelRemoveBtn">Cancel</button>
+      </div>
+    `;
+    document.getElementById('confirmRemoveBtn').addEventListener('click', ()=> removeStep(s.id));
+    document.getElementById('cancelRemoveBtn').addEventListener('click', ()=>{ removeConfirmStep = null; render(); });
+    return;
+  }
+
+  outerActions.innerHTML = `
+    <button class="outer-btn" id="editWindowOuterBtn">✎ Edit title, description & links</button>
+    <button class="outer-btn danger" id="removeWindowOuterBtn">✕ Remove this window</button>
+  `;
+  document.getElementById('editWindowOuterBtn').addEventListener('click', ()=>{
+    editingWindow = s.id;
+    editDraft = {
+      title: s.title, sub: s.sub || '',
+      links: (s.links || []).map(l => ({...l, days: scheduleToDays(l.schedule)})),
+      days: scheduleToDays(s.schedule),
+      note: skillNotes[s.id] || ''
+    };
+    render();
+  });
+  document.getElementById('removeWindowOuterBtn').addEventListener('click', ()=>{ removeConfirmStep = s.id; render(); });
+}
+
+// ---------- master render ----------
+async function render(){
+  ensureToday();
+  setProgress();
+
+  if (view === 'manage'){
+    stepLabel.textContent = 'Reorder & manage';
+    renderManageScreen();
+    renderManageNav();
+    outerActions.innerHTML = '';
+    return;
+  }
+
+  if (view === 'progress'){
+    stepLabel.textContent = 'Progress';
+    renderProgress();
+    renderProgressNav();
+    outerActions.innerHTML = '';
+    return;
+  }
+
+  if (view === 'todo'){
+    const list = todoLists.find(l => l.id === activeTodoListId);
+    if (!list){ view = 'grid'; activeTodoListId = null; return render(); }
+    stepLabel.textContent = list.title;
+    renderTodoScreen();
+    renderTodoNav();
+    renderOuterActions();
+    return;
+  }
+
+  if (view === 'addTodoList'){
+    stepLabel.textContent = 'Add a to-do-list';
+    renderAddTodoListForm();
+    outerActions.innerHTML = '';
+    return;
+  }
+
+  if (view === 'add'){
+    stepLabel.textContent = 'Add a skill';
+    renderAddForm();
+    outerActions.innerHTML = '';
+    return;
+  }
+
+  if (view === 'detail'){
+    const s = STEPS.find(x => x.id === activeId);
+    if (!s){ view = 'grid'; activeId = null; return render(); }
+    stepLabel.textContent = s.title;
+    if (editingWindow === s.id){
+      renderWindowEditor(s);
+      renderWindowEditorNav();
+      outerActions.innerHTML = '';
+      return;
+    }
+    if (s.type === 'weight'){
+      await renderWeightStep(s);
+    } else {
+      renderLinkStep(s);
+    }
+    renderSkillNote(s);
+    renderDetailNav(s);
+    renderOuterActions();
+    return;
+  }
+
+  // grid view (default / home)
+  stepLabel.textContent = '';
+  renderGrid();
+  renderOuterActions();
+}
+
+(async function init(){
+  STEPS = await loadSteps();
+  await migrateSteps();
+  skillNotes = await loadSkillNotes();
+  completions = await loadCompletions();
+  history = await loadHistory();
+  linkHistory = await loadLinkHistory();
+  todos = await loadTodos();
+  const loadedLists = await loadTodoLists();
+  if (loadedLists){
+    todoLists = loadedLists;
+    // legacy todos saved before multi-list support won't have a listId — attach them to the first list
+    let needsSave = false;
+    todos.forEach(t => {
+      if (!t.listId){ t.listId = todoLists[0].id; needsSave = true; }
+    });
+    if (needsSave) await saveTodos();
+  } else {
+    todoLists = [{ id: 'todo-list-default', title: 'To-Do List' }];
+    todos = todos.map(t => t.listId ? t : { ...t, listId: 'todo-list-default' });
+    await saveTodoLists();
+    if (todos.length) await saveTodos();
+  }
+  let notesChanged = false;
+  STEPS.forEach(s => {
+    if (!skillNotes[s.id] && DEFAULT_NOTES[s.id]){
+      skillNotes[s.id] = DEFAULT_NOTES[s.id];
+      notesChanged = true;
+    }
+  });
+  if (notesChanged) await saveSkillNotes();
+  todoCleanupDate = await loadTodoCleanupDate();
+  await cleanupCompletedTodosIfNewDay();
+  render();
+  // catch the midnight rollover if the app is left open — check every minute
+  setInterval(async ()=>{
+    const changed = await cleanupCompletedTodosIfNewDay();
+    if (changed) render();
+  }, 60 * 1000);
+})();
+</script>
+</body>
+</html>
