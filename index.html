@@ -1013,6 +1013,16 @@
   .auth-msg.error{ color: var(--danger); }
   .auth-links{ display:flex; justify-content:space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
   .btn:disabled{ opacity: 0.55; cursor: progress; }
+  .account-bar{ display:flex; align-items:center; justify-content:space-between; gap: 12px; margin: 14px 2px 0; }
+  .account-bar[hidden]{ display:none; }
+  .account-bar .sync-status{ margin: 0; flex: 1; min-width: 0; }
+  .logout-btn{
+    flex-shrink:0; background: transparent; border: 1px solid rgba(243,242,238,0.28); color: var(--ghost);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 0; cursor: pointer;
+  }
+  .logout-btn:hover{ background: var(--infrared); border-color: var(--infrared); color: var(--void); }
+  .logout-btn:focus-visible{ outline: 2px solid var(--bay); outline-offset: 2px; }
   .sync-status{
     margin: 14px 2px 0; min-height: 14px;
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -1048,7 +1058,10 @@
   <div class="steplabel" id="stepLabel"></div>
   <div class="card" id="card"></div>
   <div class="outer-actions" id="outerActions"></div>
-  <div class="sync-status" id="syncStatus" aria-live="polite"></div>
+  <div class="account-bar" id="accountBar" hidden>
+    <div class="sync-status" id="syncStatus" aria-live="polite"></div>
+    <button class="logout-btn" id="logoutBtn" type="button">Log out</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1176,8 +1189,16 @@ const sb = SUPABASE_READY
 let currentUser = null;
 let syncStatus = 'idle'; // idle | saving | saved | offline | error
 
+function updateAccountBar(){
+  const bar = document.getElementById('accountBar');
+  if (bar) bar.hidden = !currentUser;
+}
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (confirm('Log out of your account on this device? Your routine stays saved in your account.')) signOut();
+});
 function setSyncStatus(st){
   syncStatus = st;
+  updateAccountBar();
   const el = document.getElementById('syncStatus');
   if (!el || !currentUser) return;
   const label = { idle: 'Synced', saved: 'Synced', saving: 'Saving…', offline: 'Offline — will sync when back online', error: 'Sync error — will retry' }[st] || '';
@@ -3861,7 +3882,7 @@ function renderOuterActions(){
       <button class="outer-btn" id="calendarsOuterBtn">📅 iPhone calendar</button>
       <button class="outer-btn" id="backupOuterBtn">⬇ Backup</button>
       <button class="outer-btn" id="restoreOuterBtn">⬆ Restore</button>
-      <button class="outer-btn danger" id="signOutOuterBtn">⎋ Sign out</button>
+      <button class="outer-btn danger" id="signOutOuterBtn">⎋ Log out</button>
       <input type="file" id="restoreFileInput" accept="application/json" style="display:none">
     `;
     document.getElementById('optionsToggleBtn').addEventListener('click', toggleOptions);
@@ -4206,7 +4227,7 @@ async function signOut(){
   const uid = currentUser && currentUser.id;
   if (sb && navigator.onLine){ try{ await Sync.flush(); }catch(e){} }
   if (Object.keys(Sync.pending).length){
-    const ok = confirm('Some changes haven\'t reached the cloud yet (you may be offline). Sign out anyway and lose them?');
+    const ok = confirm('Some changes haven\'t reached the cloud yet (you may be offline). Log out anyway and lose them?');
     if (!ok) return;
   }
   signingOut = true;
@@ -4225,6 +4246,7 @@ async function signOut(){
   clearCalendarCache();
   const st = document.getElementById('syncStatus'); if (st){ st.textContent = ''; delete st.dataset.state; }
   signingOut = false;
+  updateAccountBar();
   renderAuth('signin');
 }
 
@@ -4615,6 +4637,7 @@ function renderCalendarsScreen(){
 let authMode = 'signin';
 function renderAuth(mode, message, isError){
   authMode = mode || 'signin';
+  updateAccountBar();
   outerActions.innerHTML = '';
   const titles = { signin: 'Sign in.', signup: 'Create account.', reset: 'Reset password.', newpass: 'New password.' };
   const subs = {
