@@ -981,6 +981,33 @@
   .tp-open:hover{ color: var(--ink); }
   .today-panel button:focus-visible, .today-panel input:focus-visible{ outline: 2px solid var(--bay); outline-offset: 2px; }
 
+  /* ===== iPhone calendar events ===== */
+  .cal-evdots{ position:absolute; right: 6px; bottom: 8px; z-index:1; display:flex; gap: 2px; }
+  .cal-evdots i{ display:block; width: 5px; height: 5px; border-radius: 50%; background: var(--ec, var(--iris)); }
+  .cal-day.today .cal-evdots i{ box-shadow: 0 0 0 1px var(--void); }
+  .ev-block{ margin: 0 0 26px; }
+  .ev-head{ display:flex; justify-content:space-between; align-items:flex-end; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); }
+  .ev-title{ font-family: var(--serif); font-weight: 300; font-size: 22px; line-height:1.05; margin:0; }
+  .ev-count{ font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+  .ev-list{ list-style:none; margin:0; padding:0; }
+  .ev-row{ display:flex; align-items:flex-start; gap: 10px; padding: 9px 0 9px 10px; border-bottom: 1px solid var(--border-soft); box-shadow: inset 3px 0 0 var(--ec); }
+  .ev-row.past{ opacity: 0.5; }
+  .ev-time{ flex-shrink:0; width: 92px; font-family: var(--mono); font-size: 10.5px; line-height: 1.6; color: var(--ink-soft); }
+  .ev-main{ flex:1; min-width:0; }
+  .ev-name{ font-size: 14px; line-height: 1.35; overflow-wrap:anywhere; }
+  .ev-loc{ font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap:anywhere; }
+  .ev-empty{ font-size: 12.5px; color: var(--ink-soft); margin: 10px 0 0; }
+  .ev-note{ font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--danger); margin: 8px 0 0; }
+  .feed-list{ border-top: 1px solid var(--ink); margin-bottom: 20px; }
+  .feed-row{ display:flex; align-items:center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .feed-sw{ flex-shrink:0; width: 14px; height: 14px; }
+  .feed-info{ flex:1; min-width:0; }
+  .feed-name{ font-family: var(--serif); font-size: 19px; font-weight: 300; }
+  .feed-meta{ font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); margin-top: 3px; overflow-wrap:anywhere; }
+  .feed-meta.err{ color: var(--danger); text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; }
+  .help-box{ margin: 18px 0 0; padding: 12px 14px; border: 1px solid var(--border); background: var(--paper); font-size: 13px; line-height: 1.55; }
+  .help-box ol{ margin: 6px 0 0; padding-left: 18px; }
+
   /* ===== account / sync ===== */
   .auth-msg{ min-height: 18px; margin: -8px 0 14px; font-size: 13px; color: var(--ink); }
   .auth-msg.error{ color: var(--danger); }
@@ -1100,7 +1127,7 @@ async function rawDelete(key){
 
 // Keys that hold the user's data and are synced to their account.
 const SYNC_KEYS = ['routine-steps', 'skill-notes', 'completions', 'completion-history', 'link-history',
-  'weight-entries', 'todo-list', 'todo-lists', 'todo-done-log', 'todo-cleanup-date'];
+  'weight-entries', 'todo-list', 'todo-lists', 'todo-done-log', 'todo-cleanup-date', 'calendar-feeds'];
 
 window.storage = {
   async get(key, shared){
@@ -1452,7 +1479,7 @@ async function saveLinkHistory(){
   try{ await window.storage.set('link-history', JSON.stringify(linkHistory), false); }
   catch(e){ console.error('storage error', e); }
 }
-const BACKUP_KEYS = ['routine-steps', 'skill-notes', 'completions', 'completion-history', 'link-history', 'weight-entries', 'todo-list', 'todo-lists', 'todo-done-log'];
+const BACKUP_KEYS = ['calendar-feeds', 'routine-steps', 'skill-notes', 'completions', 'completion-history', 'link-history', 'weight-entries', 'todo-list', 'todo-lists', 'todo-done-log'];
 
 async function exportBackup(){
   const data = {};
@@ -2389,6 +2416,7 @@ function renderCalendarHTML(){
       <span class="cal-hijri">${hijriPart(d, 'day', { day: 'numeric' })}</span>
       <span class="cal-num">${d.getDate()}</span>
       <span class="cal-pct">${pct != null ? pct + '%' : ''}</span>
+      ${calEventDotsHTML(k)}
     </div>`;
   }).join('');
   const offset = calExpanded ? calMonthOffset : calWeekOffset;
@@ -2801,6 +2829,7 @@ function renderGrid(){
       <p class="sub">${dueSteps.length ? `${doneCount} of ${dueSteps.length} done today` : (STEPS.length ? "Nothing scheduled for today." : "No windows yet — add the first one below.")}</p>
     </div>
     ${renderCalendarHTML()}
+    ${renderEventsBlock(viewingDate || todayKey())}
     ${viewingDate
       ? (viewingDate < todayKey() ? renderPastDayPanel(viewingDate) : renderTodayPanel(pinnedLists[0] || null, viewingDate))
       : pinnedLists.map(l => renderTodayPanel(l)).join('')}
@@ -3829,6 +3858,7 @@ function renderOuterActions(){
       <button class="outer-btn" id="addTodoListOuterBtn">+ Add a to-do-list</button>
       <button class="outer-btn" id="reorderOuterBtn">⇅ Reorder windows</button>
       <button class="outer-btn" id="progressOuterBtn">📈 Progress</button>
+      <button class="outer-btn" id="calendarsOuterBtn">📅 iPhone calendar</button>
       <button class="outer-btn" id="backupOuterBtn">⬇ Backup</button>
       <button class="outer-btn" id="restoreOuterBtn">⬆ Restore</button>
       <button class="outer-btn danger" id="signOutOuterBtn">⎋ Sign out</button>
@@ -3839,6 +3869,7 @@ function renderOuterActions(){
     document.getElementById('addTodoListOuterBtn').addEventListener('click', ()=>{ view = 'addTodoList'; render(); });
     document.getElementById('reorderOuterBtn').addEventListener('click', ()=>{ view = 'manage'; render(); });
     document.getElementById('progressOuterBtn').addEventListener('click', ()=>{ view = 'progress'; render(); });
+    document.getElementById('calendarsOuterBtn').addEventListener('click', ()=>{ view = 'calendars'; render(); });
     document.getElementById('backupOuterBtn').addEventListener('click', exportBackup);
     document.getElementById('signOutOuterBtn').addEventListener('click', signOut);
     document.getElementById('restoreOuterBtn').addEventListener('click', ()=>{
@@ -3919,6 +3950,13 @@ async function render(){
     stepLabel.textContent = 'Reorder & manage';
     renderManageScreen();
     renderManageNav();
+    outerActions.innerHTML = '';
+    return;
+  }
+
+  if (view === 'calendars'){
+    stepLabel.textContent = 'iPhone calendar';
+    renderCalendarsScreen();
     outerActions.innerHTML = '';
     return;
   }
@@ -4018,6 +4056,7 @@ async function loadAllState(){
   if (notesChanged) await saveSkillNotes();
   doneLog = await loadDoneLog();
   todoCleanupDate = await loadTodoCleanupDate();
+  await loadCalendarFeeds();
 }
 
 let appStarted = false;
@@ -4027,6 +4066,7 @@ async function startApp(){
   view = 'grid';
   render();
   setSyncStatus(syncStatus);
+  refreshCalendars(false);
   if (appStarted) return;
   appStarted = true;
   // catch the midnight rollover if the app is left open — check every minute
@@ -4045,6 +4085,7 @@ async function startApp(){
     if (!currentUser) return;
     if (document.visibilityState === 'hidden'){ Sync.flush(); return; }
     await refreshFromCloud();
+    refreshCalendars(false);
   });
 }
 
@@ -4181,9 +4222,393 @@ async function signOut(){
   Sync.pending = {};
   STEPS = []; todos = []; todoLists = []; history = {}; linkHistory = {}; skillNotes = {}; doneLog = {};
   activeId = null; activeTodoListId = null; calSelectedKey = null; view = 'grid';
+  clearCalendarCache();
   const st = document.getElementById('syncStatus'); if (st){ st.textContent = ''; delete st.dataset.state; }
   signingOut = false;
   renderAuth('signin');
+}
+
+// ---------- iPhone (iCloud) calendar ----------
+// Reads published calendar links (iCloud "Public Calendar" share links) through a small Supabase
+// Edge Function named `calendar-proxy` (browsers aren't allowed to read those links directly).
+let calFeeds = [];        // [{ id, name, url, color }] — synced with the account
+let calEvents = [];       // expanded occurrences in memory: { title, location, start:Date, end:Date, allDay, color }
+let calFeedState = {};    // id -> { at, error }
+let calRefreshing = false;
+const CAL_COLORS = ['#9886E2', '#3A78DB', '#F25A45', '#A9C8C4', '#F1D5B1', '#0B0B0B'];
+const CAL_CACHE_PREFIX = 'cal-cache-';
+const CAL_MAX_AGE = 15 * 60 * 1000;
+
+async function loadCalendarFeeds(){
+  try{
+    const res = await window.storage.get('calendar-feeds', false);
+    const v = res ? JSON.parse(res.value) : [];
+    calFeeds = Array.isArray(v) ? v : [];
+  }catch(e){ calFeeds = []; }
+  calFeedState = {};
+  calEvents = [];
+  calFeeds.forEach(f => {
+    try{
+      const c = JSON.parse(localStorage.getItem(CAL_CACHE_PREFIX + f.id) || 'null');
+      if (c && c.url === f.url){
+        calFeedState[f.id] = { at: c.at, error: c.error || null };
+        (c.events || []).forEach(e => calEvents.push({ title: e.t, location: e.l, start: new Date(e.s), end: new Date(e.e), allDay: !!e.a, color: f.color }));
+      }
+    }catch(e){}
+  });
+}
+async function saveCalendarFeeds(){
+  await window.storage.set('calendar-feeds', JSON.stringify(calFeeds), false);
+}
+function clearCalendarCache(){
+  try{
+    Object.keys(localStorage).filter(k => k.startsWith(CAL_CACHE_PREFIX)).forEach(k => localStorage.removeItem(k));
+  }catch(e){}
+  calFeeds = []; calEvents = []; calFeedState = {};
+}
+
+async function fetchFeedText(url){
+  const { data, error } = await sb.functions.invoke('calendar-proxy', { body: { url } });
+  if (error){
+    let detail = '';
+    try{ if (error.context && typeof error.context.text === 'function') detail = await error.context.text(); }catch(e){}
+    const status = error.context && error.context.status;
+    if (status === 404 || /not found|failed to send a request/i.test(String(error.message) + detail)){
+      throw new Error('The calendar helper isn\'t set up in Supabase yet (Edge Function "calendar-proxy").');
+    }
+    throw new Error(detail || error.message || 'Could not load calendar.');
+  }
+  const text = typeof data === 'string' ? data : (data instanceof Blob ? await data.text() : String(data || ''));
+  if (!text.includes('BEGIN:VCALENDAR')) throw new Error('That link didn\'t return a calendar.');
+  return text;
+}
+
+async function refreshCalendars(force){
+  if (!currentUser || !sb || !navigator.onLine || calRefreshing || !calFeeds.length) return;
+  const stale = calFeeds.filter(f => force || !calFeedState[f.id] || !calFeedState[f.id].at || (Date.now() - calFeedState[f.id].at) > CAL_MAX_AGE);
+  if (!stale.length) return;
+  calRefreshing = true;
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+  const to = new Date(now.getFullYear() + 1, now.getMonth() + 1, 1);
+  for (const f of stale){
+    try{
+      const text = await fetchFeedText(f.url);
+      const occ = expandCalendar(parseICS(text), from, to);
+      const cache = { url: f.url, at: Date.now(), error: null,
+        events: occ.map(o => ({ t: o.title, l: o.location || '', s: o.start.getTime(), e: o.end.getTime(), a: o.allDay ? 1 : 0 })) };
+      try{ localStorage.setItem(CAL_CACHE_PREFIX + f.id, JSON.stringify(cache)); }catch(e){}
+    }catch(e){
+      console.error('calendar refresh failed', e);
+      let prev = null;
+      try{ prev = JSON.parse(localStorage.getItem(CAL_CACHE_PREFIX + f.id) || 'null'); }catch(_){}
+      const cache = (prev && prev.url === f.url) ? prev : { url: f.url, at: 0, events: [] };
+      cache.error = e.message || String(e);
+      cache.at = cache.at || 0;
+      try{ localStorage.setItem(CAL_CACHE_PREFIX + f.id, JSON.stringify(cache)); }catch(_){}
+      calFeedState[f.id] = { at: cache.at, error: cache.error };
+    }
+  }
+  calRefreshing = false;
+  await loadCalendarFeeds();
+  if (view === 'calendars') renderCalendarsScreen();
+  else if (isSafeToRerender()) render();
+}
+
+// --- .ics parsing ---
+function unescapeICS(v){ return v.replace(/\\n/gi, ' ').replace(/\\([,;\\])/g, '$1').trim(); }
+function tzOffsetMs(ts, tz){
+  const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const p = {};
+  f.formatToParts(new Date(ts)).forEach(x => { p[x.type] = x.value; });
+  return Date.UTC(+p.year, +p.month - 1, +p.day, (+p.hour) % 24, +p.minute, +p.second) - ts;
+}
+function zonedToDate(y, mo, d, h, mi, se, tz){
+  try{
+    const guess = Date.UTC(y, mo - 1, d, h, mi, se);
+    const o1 = tzOffsetMs(guess, tz);
+    let t = guess - o1;
+    const o2 = tzOffsetMs(t, tz);
+    if (o2 !== o1) t = guess - o2;
+    return new Date(t);
+  }catch(e){ return new Date(y, mo - 1, d, h, mi, se); }
+}
+function parseICSDate(value, params){
+  const v = String(value || '').trim();
+  const m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/);
+  if (!m) return null;
+  const y = +m[1], mo = +m[2], d = +m[3];
+  if (!m[4] || (params && params.VALUE === 'DATE')) return { date: new Date(y, mo - 1, d), allDay: true };
+  const h = +m[4], mi = +m[5], se = +(m[6] || 0);
+  if (m[7]) return { date: new Date(Date.UTC(y, mo - 1, d, h, mi, se)), allDay: false, utc: true };
+  if (params && params.TZID) return { date: zonedToDate(y, mo, d, h, mi, se, params.TZID), allDay: false };
+  return { date: new Date(y, mo - 1, d, h, mi, se), allDay: false };
+}
+function parseDurationMs(v){
+  const m = String(v).match(/^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/);
+  if (!m) return 0;
+  const ms = ((+m[2] || 0) * 7 * 86400 + (+m[3] || 0) * 86400 + (+m[4] || 0) * 3600 + (+m[5] || 0) * 60 + (+m[6] || 0)) * 1000;
+  return m[1] === '-' ? -ms : ms;
+}
+function parseICS(text){
+  const lines = text.replace(/\r\n?/g, '\n').replace(/\n[ \t]/g, '').split('\n');
+  const events = [];
+  let ev = null, depth = 0;
+  for (const line of lines){
+    if (line === 'BEGIN:VEVENT'){ ev = { exdates: [] }; depth = 0; continue; }
+    if (!ev) continue;
+    if (line.startsWith('BEGIN:')){ depth++; continue; }     // e.g. VALARM inside an event
+    if (line.startsWith('END:') && line !== 'END:VEVENT'){ depth--; continue; }
+    if (line === 'END:VEVENT'){ if (ev.start && ev.status !== 'CANCELLED') events.push(ev); ev = null; continue; }
+    if (depth > 0) continue;
+    const idx = line.indexOf(':');
+    if (idx < 0) continue;
+    const left = line.slice(0, idx), value = line.slice(idx + 1);
+    const parts = left.split(';');
+    const name = parts[0].toUpperCase();
+    const params = {};
+    parts.slice(1).forEach(pp => { const i = pp.indexOf('='); if (i > 0) params[pp.slice(0, i).toUpperCase()] = pp.slice(i + 1).replace(/^"|"$/g, ''); });
+    if (name === 'SUMMARY') ev.title = unescapeICS(value);
+    else if (name === 'LOCATION') ev.location = unescapeICS(value);
+    else if (name === 'UID') ev.uid = value.trim();
+    else if (name === 'DTSTART') ev.start = parseICSDate(value, params);
+    else if (name === 'DTEND') ev.end = parseICSDate(value, params);
+    else if (name === 'DURATION') ev.duration = parseDurationMs(value);
+    else if (name === 'RRULE') ev.rrule = value.trim();
+    else if (name === 'STATUS') ev.status = value.trim().toUpperCase();
+    else if (name === 'RECURRENCE-ID') ev.recurrenceId = parseICSDate(value, params);
+    else if (name === 'EXDATE') value.split(',').forEach(x => { const d = parseICSDate(x, params); if (d) ev.exdates.push(d.date.getTime()); });
+  }
+  return events;
+}
+function expandCalendar(events, from, to){
+  // moved/edited single occurrences replace the matching occurrence of the repeating event
+  const masters = {};
+  events.forEach(e => { if (e.rrule && e.uid) masters[e.uid] = e; });
+  events.forEach(e => { if (e.recurrenceId && e.uid && masters[e.uid]) masters[e.uid].exdates.push(e.recurrenceId.date.getTime()); });
+  const out = [];
+  events.forEach(e => { try{ out.push(...expandEvent(e, from, to)); }catch(err){ console.error('event skipped', err); } });
+  out.sort((a, b) => a.start - b.start);
+  return out;
+}
+function expandEvent(ev, from, to){
+  const out = [];
+  const s = ev.start.date;
+  const allDay = ev.start.allDay;
+  let durMs = ev.end ? (ev.end.date - s) : (ev.duration != null ? ev.duration : (allDay ? 86400000 : 0));
+  if (!(durMs >= 0)) durMs = 0;
+  const ex = new Set(ev.exdates);
+  const push = st => {
+    if (ex.has(st.getTime())) return;
+    const en = new Date(st.getTime() + durMs);
+    if (en >= from && st <= to) out.push({ title: ev.title || '(No title)', location: ev.location || '', start: st, end: en, allDay });
+  };
+  if (!ev.rrule || ev.recurrenceId){ push(s); return out; }
+  const r = {};
+  ev.rrule.split(';').forEach(pp => { const i = pp.indexOf('='); if (i > 0) r[pp.slice(0, i).toUpperCase()] = pp.slice(i + 1); });
+  const freq = r.FREQ, interval = Math.max(1, +(r.INTERVAL || 1));
+  const count = r.COUNT ? +r.COUNT : Infinity;
+  const untilP = r.UNTIL ? parseICSDate(r.UNTIL, {}) : null;
+  const until = untilP ? (untilP.allDay ? new Date(untilP.date.getTime() + 86399999) : untilP.date) : null;
+  const DAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+  const byday = r.BYDAY ? r.BYDAY.split(',') : null;
+  const bymonthday = r.BYMONTHDAY ? r.BYMONTHDAY.split(',').map(Number) : null;
+  // repeat on the calendar's own clock: UTC-defined events keep their UTC time, others keep local wall-clock time
+  const U = !!ev.start.utc;
+  const g = U ? { Y: x => x.getUTCFullYear(), Mo: x => x.getUTCMonth(), D: x => x.getUTCDate(), W: x => x.getUTCDay() }
+              : { Y: x => x.getFullYear(), Mo: x => x.getMonth(), D: x => x.getDate(), W: x => x.getDay() };
+  const H = U ? s.getUTCHours() : s.getHours(), M = U ? s.getUTCMinutes() : s.getMinutes(), S = U ? s.getUTCSeconds() : s.getSeconds();
+  const mk = (y, m, d) => U ? new Date(Date.UTC(y, m, d, H, M, S)) : new Date(y, m, d, H, M, S);
+  const dowOf = (y, m, d) => U ? new Date(Date.UTC(y, m, d)).getUTCDay() : new Date(y, m, d).getDay();
+  const LIMIT = 20000;
+  let n = 0;
+  const emit = d => {               // returns false once we should stop generating
+    if (d < s) return true;
+    if (until && d > until) return false;
+    if (n >= count) return false;
+    n++;
+    push(d);
+    return d <= to;
+  };
+  if (freq === 'DAILY'){
+    for (let i = 0; i < LIMIT; i++){ if (!emit(mk(g.Y(s), g.Mo(s), g.D(s) + i * interval))) break; }
+  } else if (freq === 'WEEKLY'){
+    const days = byday ? byday.map(x => DAYS.indexOf(x.slice(-2))).filter(x => x >= 0).sort((a, b) => a - b) : [g.W(s)];
+    const ws = mk(g.Y(s), g.Mo(s), g.D(s) - g.W(s));
+    outer: for (let w = 0; w < LIMIT; w++){
+      for (const dw of days){
+        if (!emit(mk(g.Y(ws), g.Mo(ws), g.D(ws) + w * 7 * interval + dw))) break outer;
+      }
+    }
+  } else if (freq === 'MONTHLY'){
+    for (let i = 0; i < LIMIT; i++){
+      const first = mk(g.Y(s), g.Mo(s) + i * interval, 1);
+      const y = g.Y(first), m = g.Mo(first);
+      const daysIn = U ? new Date(Date.UTC(y, m + 1, 0)).getUTCDate() : new Date(y, m + 1, 0).getDate();
+      let cands = [];
+      if (byday){
+        byday.forEach(x => {
+          const mt = x.match(/^([+-]?\d+)?(SU|MO|TU|WE|TH|FR|SA)$/);
+          if (!mt) return;
+          const ord = mt[1] ? +mt[1] : 0, dw = DAYS.indexOf(mt[2]);
+          const matches = [];
+          for (let dd = 1; dd <= daysIn; dd++) if (dowOf(y, m, dd) === dw) matches.push(dd);
+          if (!ord) cands.push(...matches);
+          else { const v = ord > 0 ? matches[ord - 1] : matches[matches.length + ord]; if (v) cands.push(v); }
+        });
+      } else {
+        (bymonthday || [g.D(s)]).forEach(dd => { const v = dd < 0 ? daysIn + dd + 1 : dd; if (v >= 1 && v <= daysIn) cands.push(v); });
+      }
+      cands = [...new Set(cands)].sort((a, b) => a - b);
+      let stop = false;
+      for (const dd of cands){ if (!emit(mk(y, m, dd))){ stop = true; break; } }
+      if (stop || first > to) break;
+    }
+  } else if (freq === 'YEARLY'){
+    for (let i = 0; i < LIMIT; i++){
+      const y = g.Y(s) + i * interval;
+      const d = mk(y, g.Mo(s), g.D(s));
+      if (g.Mo(d) !== g.Mo(s)) continue; // Feb 29 in non-leap years
+      if (!emit(d)) break;
+    }
+  } else {
+    push(s);
+  }
+  return out;
+}
+
+// --- display ---
+function eventsForDay(k){
+  const [y, m, d] = k.split('-').map(Number);
+  const ds = new Date(y, m - 1, d), de = new Date(y, m - 1, d + 1);
+  return calEvents.filter(e => e.start < de && (e.end > ds || (e.start >= ds && e.end.getTime() === e.start.getTime())))
+    .sort((a, b) => (b.allDay - a.allDay) || (a.start - b.start));
+}
+function calEventDotsHTML(k){
+  if (!calEvents.length) return '';
+  const evs = eventsForDay(k);
+  if (!evs.length) return '';
+  const colors = [...new Set(evs.map(e => e.color))].slice(0, 3);
+  return `<span class="cal-evdots" aria-label="${evs.length} event${evs.length === 1 ? '' : 's'}">${colors.map(c => `<i style="--ec:${c}"></i>`).join('')}</span>`;
+}
+function fmtClock(d){ return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }); }
+function eventTimeLabel(e, k){
+  if (e.allDay) return 'All day';
+  const [y, m, d] = k.split('-').map(Number);
+  const ds = new Date(y, m - 1, d), de = new Date(y, m - 1, d + 1);
+  const startsBefore = e.start < ds, endsAfter = e.end > de;
+  if (startsBefore && endsAfter) return 'All day';
+  if (startsBefore) return 'Until ' + fmtClock(e.end);
+  if (endsAfter || e.end.getTime() === e.start.getTime()) return fmtClock(e.start);
+  return fmtClock(e.start) + '–' + fmtClock(e.end);
+}
+function renderEventsBlock(k){
+  if (!calFeeds.length) return '';
+  const evs = eventsForDay(k);
+  const isToday = k === todayKey();
+  const now = new Date();
+  const errs = calFeeds.filter(f => calFeedState[f.id] && calFeedState[f.id].error);
+  return `<section class="ev-block">
+    <div class="ev-head">
+      <h2 class="ev-title">${isToday ? 'Calendar' : 'Calendar · ' + escHTML(new Date(k + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }))}</h2>
+      <div class="ev-count">${evs.length} event${evs.length === 1 ? '' : 's'}</div>
+    </div>
+    ${evs.length ? `<ul class="ev-list">${evs.map(e => `<li class="ev-row ${isToday && !e.allDay && e.end < now ? 'past' : ''}" style="--ec:${e.color}">
+        <span class="ev-time">${eventTimeLabel(e, k)}</span>
+        <div class="ev-main"><div class="ev-name" dir="auto">${escHTML(e.title)}</div>${e.location ? `<div class="ev-loc" dir="auto">${escHTML(e.location)}</div>` : ''}</div>
+      </li>`).join('')}</ul>` : `<p class="ev-empty">${calEvents.length || !errs.length ? 'No events.' : 'Events couldn\'t be loaded yet.'}</p>`}
+    ${errs.length ? `<p class="ev-note">Calendar not updating — see Options › iPhone calendar</p>` : ''}
+  </section>`;
+}
+
+let calColorDraft = null;
+function renderCalendarsScreen(){
+  if (!calColorDraft) calColorDraft = CAL_COLORS[calFeeds.length % CAL_COLORS.length];
+  const meta = f => {
+    const st = calFeedState[f.id];
+    if (st && st.error) return `<div class="feed-meta err">${escHTML(st.error)}</div>`;
+    if (st && st.at) return `<div class="feed-meta">Updated ${new Date(st.at).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</div>`;
+    return `<div class="feed-meta">${calRefreshing ? 'Loading…' : 'Not loaded yet'}</div>`;
+  };
+  card.innerHTML = `
+    ${ICONS.calendar}
+    <h1 style="font-size:26px;">iPhone calendar</h1>
+    <p class="sub">Show events from your iPhone (iCloud) calendars on this app's calendar. The links are saved to your account.</p>
+    ${calFeeds.length ? `<div class="feed-list">${calFeeds.map(f => `<div class="feed-row">
+        <span class="feed-sw" style="background:${f.color}"></span>
+        <div class="feed-info"><div class="feed-name" dir="auto">${escHTML(f.name)}</div>${meta(f)}</div>
+        <button class="manage-remove" data-id="${f.id}" aria-label="Remove ${escHTML(f.name)}">✕</button>
+      </div>`).join('')}</div>
+      <button class="edit-link-btn" id="calRefreshBtn" style="margin-bottom:22px;">${calRefreshing ? 'Refreshing…' : '↻ Refresh now'}</button>` : ''}
+    <div class="edit-fields">
+      <div class="edit-field"><label for="calNameInput">Calendar name</label>
+        <input class="edit-input" id="calNameInput" dir="auto" placeholder="e.g. Personal, Work, Oxford"></div>
+      <div class="edit-field"><label for="calUrlInput">Public calendar link</label>
+        <input class="edit-input" id="calUrlInput" dir="ltr" type="url" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="webcal://p…-caldav.icloud.com/published/…"></div>
+      <div class="edit-field"><label>Colour</label>
+        <div class="todo-color-row" id="calColorRow" style="margin-bottom:0;">${CAL_COLORS.map(c => `<button class="todo-swatch ${c === calColorDraft ? 'selected' : ''}" data-color="${c}" style="background:${c}" aria-label="colour"></button>`).join('')}</div></div>
+    </div>
+    <div class="actions"><button class="btn btn-primary" id="calAddBtn">+ Add calendar</button></div>
+    <div class="save-msg" id="calMsg"></div>
+    <div class="help-box">
+      <strong>Getting the link on iPhone</strong>
+      <ol>
+        <li>Open <b>Calendar</b> → tap <b>Calendars</b> at the bottom.</li>
+        <li>Tap <b>ⓘ</b> next to an iCloud calendar.</li>
+        <li>Turn on <b>Public Calendar</b>, tap <b>Share Link…</b> → <b>Copy</b>.</li>
+        <li>Paste it above. Repeat for each calendar you want.</li>
+      </ol>
+      <p style="margin:8px 0 0;">Anyone who has that link can see the calendar, so keep it private. Updates show here within about 15 minutes.</p>
+    </div>
+  `;
+  const nav = document.createElement('div');
+  nav.className = 'nav';
+  nav.innerHTML = `<button class="back-main" disabled>← Back</button><button id="doneCalBtn" class="next-main">Done →</button>`;
+  card.appendChild(nav);
+  document.getElementById('doneCalBtn').addEventListener('click', () => { calColorDraft = null; view = 'grid'; render(); });
+  card.querySelectorAll('#calColorRow .todo-swatch').forEach(b => b.addEventListener('click', () => {
+    calColorDraft = b.dataset.color;
+    card.querySelectorAll('#calColorRow .todo-swatch').forEach(x => x.classList.toggle('selected', x === b));
+  }));
+  card.querySelectorAll('.feed-row .manage-remove').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Remove this calendar from the app?')) return;
+    calFeeds = calFeeds.filter(f => f.id !== b.dataset.id);
+    try{ localStorage.removeItem(CAL_CACHE_PREFIX + b.dataset.id); }catch(e){}
+    await saveCalendarFeeds();
+    await loadCalendarFeeds();
+    renderCalendarsScreen();
+  }));
+  const rb = document.getElementById('calRefreshBtn');
+  if (rb) rb.addEventListener('click', async () => { rb.textContent = 'Refreshing…'; await refreshCalendars(true); renderCalendarsScreen(); });
+  document.getElementById('calAddBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('calMsg');
+    const name = document.getElementById('calNameInput').value.trim() || 'Calendar';
+    const raw = document.getElementById('calUrlInput').value.trim();
+    let url;
+    try{
+      url = new URL(raw.replace(/^webcals?:\/\//i, 'https://'));
+      if (url.protocol !== 'https:') throw new Error();
+    }catch(e){ msg.style.color = 'var(--danger)'; msg.textContent = 'Paste the full calendar link.'; return; }
+    if (!/(^|\.)icloud\.com$/i.test(url.hostname) && !/^calendar\.google\.com$/i.test(url.hostname) && !/^outlook\.(live|office365)\.com$/i.test(url.hostname)){
+      msg.style.color = 'var(--danger)'; msg.textContent = 'Use an iCloud public calendar link (…icloud.com/…).'; return;
+    }
+    if (!sb || !navigator.onLine){ msg.style.color = 'var(--danger)'; msg.textContent = 'You need to be online to add a calendar.'; return; }
+    msg.style.color = ''; msg.textContent = 'Checking the link…';
+    document.getElementById('calAddBtn').disabled = true;
+    try{
+      await fetchFeedText(url.toString());
+    }catch(e){
+      document.getElementById('calAddBtn').disabled = false;
+      msg.style.color = 'var(--danger)'; msg.textContent = e.message || String(e); return;
+    }
+    const id = 'cal-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    calFeeds.push({ id, name, url: url.toString(), color: calColorDraft });
+    calColorDraft = null;
+    await saveCalendarFeeds();
+    await loadCalendarFeeds();
+    renderCalendarsScreen();
+    await refreshCalendars(true);
+  });
 }
 
 // ---------- sign-in screen ----------
